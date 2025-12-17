@@ -212,14 +212,7 @@ const Navbar = () => {
                     2020 - {new Date().getFullYear()} &copy; All rights reserved.
                   </span>
                   <Separator orientation="vertical" className="hidden h-4! sm:block" />
-                  <p className="text-muted-foreground text-sm" aria-label="open-source description">
-                    <Link
-                      href="https://github.com/cojocaru-david/portfolio"
-                      class="text-foreground"
-                      external
-                      underline>Open-source</Link
-                    > under MIT license
-                  </p>
+                
                 </div>
               </motion.div>
             </div>
