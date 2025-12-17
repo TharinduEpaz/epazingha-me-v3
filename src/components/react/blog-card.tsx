@@ -6,7 +6,7 @@ const BlogCardJSX = ({ entry }: { entry: CollectionEntry<'blog'> }) => {
   return (
     <div className="hover:bg-secondary/50 rounded-xl border p-4 transition-colors duration-300 ease-in-out">
       <a
-        href={`/${entry.collection}/${entry.id}`}
+        href={`/blog/${entry.id}`}
         className="flex flex-col gap-4 sm:flex-row"
       >
         <div className="grow">

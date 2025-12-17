@@ -1,0 +1,88 @@
+---
+title: "10 AWS S3 Facts You Probably Didn't Know"
+description: "Learn 10 facts about S3 that you might not know. From cost savings to security, this guide covers essential tips for using S3."
+date: 2025-11-03
+tags: ["S3", "AWS", "Cloud Storage"]
+authors: ["Tharindu Epasingha"]
+draft: false
+---
+
+Maybe you use s3 daily and you knew the facts, maybe you are forgotten. So my idea is to give you a quick knowledge recap, or new knowledge..
+
+## 1. S3 Etags are used to keep track of the objects
+
+> **Note:** Etags are useful if you want to programmatically detect content changes to S3 objects
+
+An entity tag (etag) is a response header that represents a resource that has changed **without the need to download**.
+Etags are part of the HTTP protocol.
+It reflects changes **only to the contents of an object, not its metadata**.
+Etag represents a specific version of an object.
+Etags allows clients to quickly verify the integrity of downloaded or uploaded data.
+
+## 2. S3 Object Lock
+
+S3 Object Lock provides WORM (Write Once Read Many) functionality. This means once an object is locked, it cannot be deleted or overwritten for a fixed amount of time or indefinitely.
+
+This is useful for:
+- Compliance requirements
+- Regulatory requirements
+- Legal hold requirements
+
+## 3. S3 Lifecycle Policies
+
+S3 Lifecycle policies can automatically transition objects between storage classes or delete them based on rules you define. This can significantly reduce storage costs.
+
+Common transitions:
+- Standard → Standard-IA (Infrequent Access) after 30 days
+- Standard-IA → Glacier after 90 days
+- Glacier → Deep Archive after 180 days
+
+## 4. S3 Transfer Acceleration
+
+S3 Transfer Acceleration uses CloudFront's edge locations to accelerate uploads to S3. This can speed up transfers by routing data through the AWS edge network.
+
+## 5. S3 Versioning
+
+When versioning is enabled, S3 stores all versions of an object, including when you delete it. This provides protection against accidental deletion or overwrites.
+
+## 6. S3 Requester Pays
+
+With Requester Pays buckets, the requester pays for both the request and the data transfer costs instead of the bucket owner. This is useful when you want to share large datasets.
+
+## 7. S3 Event Notifications
+
+S3 can send notifications when certain events occur, such as:
+- Object creation
+- Object deletion
+- Object restoration from Glacier
+
+These notifications can trigger Lambda functions, SQS queues, or SNS topics.
+
+## 8. S3 Storage Classes
+
+S3 offers multiple storage classes optimized for different use cases:
+- **Standard**: General purpose, frequently accessed data
+- **Standard-IA**: Infrequently accessed data
+- **One Zone-IA**: Infrequently accessed, non-critical data
+- **Glacier Instant Retrieval**: Archive data with millisecond retrieval
+- **Glacier Flexible Retrieval**: Archive data with retrieval options (1-5 minutes, 5-12 hours, or 12-48 hours)
+- **Glacier Deep Archive**: Lowest cost, 12-hour retrieval time
+- **Intelligent-Tiering**: Automatically moves data to the most cost-effective access tier
+
+## 9. S3 Cross-Region Replication (CRR)
+
+CRR automatically replicates objects from one S3 bucket to another in a different AWS region. This provides:
+- Compliance requirements
+- Lower latency access
+- Operational reasons
+
+## 10. S3 Server Access Logging
+
+S3 can log all requests made to a bucket. These logs can be stored in another S3 bucket and analyzed for:
+- Security auditing
+- Access patterns
+- Troubleshooting
+
+---
+
+*This article is 100% written by human. Perplexity AI is used only for research. Grammar corrected by Grammarly.*

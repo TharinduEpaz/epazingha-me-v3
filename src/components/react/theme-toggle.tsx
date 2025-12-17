@@ -11,9 +11,9 @@ const ThemeToggle: React.FC = () => {
       if (['dark', 'light'].includes(localStorageTheme)) {
         return localStorageTheme
       }
-      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        return 'dark'
-      }
+      // if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      //   return 'dark'
+      // }
       return 'light'
     })()
 
