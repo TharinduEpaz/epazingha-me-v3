@@ -8,7 +8,7 @@ import Logo from '@/components/ui/logo'
 import Layout from '@/layouts/Layout.astro'
 import { getRecentPosts } from '@/lib/data-utils'
 import { SITE } from '@/consts'
-import SriLankaSVG from './image/sri-lanka'
+import SriLankaSVG from '@/components/react/Srilanka'
 
 const blog = await getRecentPosts(3)
 const currentUrl = Astro.url;

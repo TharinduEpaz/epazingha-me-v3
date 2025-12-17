@@ -1,4 +1,4 @@
-const SVGComponent = (props:any) => (
+const SriLankaSVG = (props:any) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     shapeRendering="geometricPrecision"
@@ -43,4 +43,4 @@ const SVGComponent = (props:any) => (
     </g>
   </svg>
 );
-export default SVGComponent;
+export default SriLankaSVG;
