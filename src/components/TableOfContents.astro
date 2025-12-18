@@ -6,9 +6,10 @@ import { Icon } from 'astro-icon/components'
 
 type Props = {
   headings: MarkdownHeading[]
+  inCard?: boolean
 }
 
-const { headings } = Astro.props
+const { headings, inCard = false } = Astro.props
 
 function getHeadingMargin(depth: number): string {
   const margins: Record<number, string> = {
@@ -32,49 +33,73 @@ function cleanupHeading(text: string): string {
 
 <details
   open
-  class="group col-start-2 rounded-xl border p-4 xl:sticky xl:top-26 xl:col-start-1 xl:mr-8 xl:ml-auto xl:h-[calc(100vh-5rem)] xl:max-w-fit xl:rounded-none xl:border-none xl:p-0"
+  class={cn(
+    "group",
+    inCard 
+      ? "w-full" 
+      : "col-start-2 rounded-xl border p-4 xl:sticky xl:top-26 xl:col-start-1 xl:mr-8 xl:ml-auto xl:h-[calc(100vh-5rem)] xl:max-w-fit xl:rounded-none xl:border-none xl:p-0"
+  )}
 >
   <summary
     class="flex cursor-pointer items-center justify-between text-xl font-medium group-open:pb-4"
   >
-    <div>
-      <hr class="mb-8 hidden md:block" />
+    <div class="w-full">
+      {!inCard && <hr class="mb-8 hidden md:block" />}
       <h2
         id="skills-title"
-        class="font-custom flex items-center gap-x-2 text-2xl font-bold text-neutral-900 dark:text-white"
+        class={cn(
+          "font-custom flex items-center gap-x-2 font-bold text-neutral-900 dark:text-white",
+          inCard ? "text-lg" : "text-2xl"
+        )}
       >
         Table of Contents <Icon
           name="lucide:chevron-down"
           class="size-5 shrink-0 transition-transform group-open:rotate-180"
         />
       </h2>
-      <p class="text-sm text-neutral-500 dark:text-neutral-400">
-        This is a list of all the sections in this post. Click on any of them to
-        jump to that section.
-      </p>
+      {!inCard && (
+        <p class="text-sm text-neutral-500 dark:text-neutral-400">
+          This is a list of all the sections in this post. Click on any of them to
+          jump to that section.
+        </p>
+      )}
     </div>
   </summary>
 
   <ScrollArea
     client:load
-    className="flex max-h-64 flex-col overflow-y-auto xl:max-h-[calc(100vh-8rem)]"
+    className={cn(
+      "flex flex-col overflow-y-auto",
+      inCard 
+        ? "max-h-[calc(100vh-12rem)] mt-4" 
+        : "max-h-64 xl:max-h-[calc(100vh-8rem)]"
+    )}
     type="always"
   >
     <ul
-      class="flex list-none flex-col gap-y-2 px-4 xl:mr-8"
+      class={cn(
+        "flex list-none flex-col gap-y-2",
+        inCard ? "px-0" : "px-4 xl:mr-8"
+      )}
       id="table-of-contents"
     >
       {
         headings.map((heading) => (
           <li
             class={cn(
-              'text-foreground/60 text-sm xl:p-0',
+              'text-foreground/60 text-sm',
+              inCard ? 'xl:p-0' : 'xl:p-0',
               getHeadingMargin(heading.depth)
             )}
           >
             <a
               href={`#${heading.slug}`}
-              class="marker:text-foreground/30 block list-disc px-3 py-2 underline decoration-transparent underline-offset-[3px] transition-colors duration-200 hover:decoration-inherit xl:list-none"
+              class={cn(
+                "block underline decoration-transparent underline-offset-[3px] transition-colors duration-200 hover:decoration-inherit",
+                inCard 
+                  ? "px-2 py-1.5 text-sm" 
+                  : "marker:text-foreground/30 list-disc px-3 py-2 xl:list-none"
+              )}
               aria-label={`Scroll to ${heading.text}`}
               title={`Scroll to ${heading.text}`}
             >
