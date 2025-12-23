@@ -4,7 +4,7 @@ import PageHead from '@/components/PageHead.astro'
 import BlogCard from '@/components/react/blog-card'
 import Skills from '@/components/react/skills'
 import { buttonVariants } from '@/components/ui/button'
-import Logo from '@/components/ui/logo'
+import Profile3D from '@/components/react/profile-3d'
 import Layout from '@/layouts/Layout.astro'
 import { getRecentPosts } from '@/lib/data-utils'
 import { SITE } from '@/consts'
@@ -21,8 +21,9 @@ const currentUrl = Astro.url;
       class="flex flex-col items-center text-center sm:flex-row sm:items-start sm:gap-8 sm:text-left"
     >
       <div class="relative overflow-hidden rounded-lg sm:shrink-0 sm:overflow-hidden sm:rounded-lg">
-        <Logo
-          className="h-auto w-40 object-cover sm:w-48 md:w-56 lg:w-64 "
+        <Profile3D
+          client:load
+          className="h-40 w-40 sm:h-48 sm:w-48 md:h-56 md:w-56 lg:h-64 lg:w-64 aspect-square"
         />
       </div>
       <div class="mt-8 sm:mt-0 sm:max-w-xl">
