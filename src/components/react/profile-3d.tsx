@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from 'react'
+import { PresentationControls, Stage, useAnimations, useFBX, useGLTF } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import { useAnimations, useFBX, useGLTF, Stage, PresentationControls } from '@react-three/drei'
+import { useEffect, useRef } from 'react'
 
 // Avatar Component
 function Avatar(props: any) {
   const group = useRef<any>(null)
-  const { nodes, materials } = useGLTF('/models/avatar.glb') as any
+  const { nodes, materials } = useGLTF('/models/avatar-transformed.glb') as any
   const { animations: standingAnimation } = useFBX('/animations/Standing Idle.fbx')
 
   standingAnimation[0].name = 'Standing'
@@ -94,9 +94,9 @@ export default function Profile3D({ className }: { className?: string }) {
   return (
     <div className={className}>
       <Canvas camera={{ 
-        position: [0.2, 0.1, 13], 
+        position: [0.2, 0.1, 14], 
         fov: 70, 
-        zoom: 2.4, 
+        zoom: 2.5, 
         }}>
         <PresentationControls>
           <Stage environment="city" intensity={0.6} adjustCamera={false}>
