@@ -66,6 +66,9 @@ export default defineConfig({
 
   vite: {
     plugins: [tailwindcss() as any],
+    resolve: {
+      dedupe: ['react', 'react-dom'],
+    },
     optimizeDeps: {
       exclude: ["satori", "satori-html"],
       include: [

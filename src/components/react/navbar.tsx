@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from './link'
 import ThemeToggle from './theme-toggle'
@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Menu, X } from 'lucide-react'
 import { Separator } from '../ui/separator'
 
-const Navbar = () => {
+const Navbar: React.FC = () => {
   const [scrollLevel, setScrollLevel] = useState(0)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
