@@ -3,7 +3,7 @@ import type { IconMap, SocialLink, Site } from '@/types'
 export const SITE: Site = {
   title: 'Tharindu Epasingha',
   description:
-    "Engineer specializing in modern web technologies. Expert in React, Python, Java and cloud development. Read my latest tech tutorials, project insights, and programming tips on web development, DevOps, and software engineering best practices.",
+    "I love to code, engineer and craft applications with one clear goal of creating real-world impact through clean code, open-source contributions, and community-driven solutions.\n\nBeyond the screen, you'll find me cultivating patience through bonsai, pushing limits at the gym, and clearing my head on long runs and mountain hikes. 🌱🏃‍♂️⛰️\n\nBuilding software. Growing impact. Living with purpose.",
   href: 'https://www.epasingha.com',
   author: 'Tharindu Epasingha',
   locale: 'en-US',

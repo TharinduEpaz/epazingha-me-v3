@@ -143,9 +143,9 @@ export default function Profile3D({ className }: { className?: string }) {
       {!isLoaded && <LoaderSpinner progress={progress} />}
       <Canvas 
         camera={{ 
-          position: [0.2, 0.1, 14], 
+          position: [0.2, 0.4, 19], 
           fov: 70, 
-          zoom: 2.5, 
+          zoom: 3.2, 
         }}
       >
         <LoadingProgress 
@@ -155,7 +155,7 @@ export default function Profile3D({ className }: { className?: string }) {
         <PresentationControls>
           <Stage environment="city" intensity={0.6} adjustCamera={false}>
               <Avatar 
-                position={[-0.5, 6.5, 3]} 
+                position={[-0.4, 8, 2.7]} 
                 rotation={[1.5, 3.1, 3.1]} 
                 scale={1.5}
                 onLoad={() => setIsLoaded(true)}
