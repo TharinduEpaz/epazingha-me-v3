@@ -1,9 +1,10 @@
-import { PresentationControls, Stage, useAnimations, useFBX, useGLTF } from '@react-three/drei'
+import { PresentationControls, Stage, useAnimations, useFBX, useGLTF, useProgress } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { Loader } from 'lucide-react'
 
 // Avatar Component
-function Avatar(props: any) {
+function Avatar(props: any & { onLoad?: () => void }) {
   const group = useRef<any>(null)
   const { nodes, materials } = useGLTF('/models/avatar-transformed.glb') as any
   const { animations: standingAnimation } = useFBX('/animations/Standing Idle.fbx')
@@ -18,10 +19,14 @@ function Avatar(props: any) {
     if (action) {
       action.reset().fadeIn(0.5).play()
     }
+    // Notify parent that model is loaded
+    if (props.onLoad) {
+      props.onLoad()
+    }
     return () => {
       if (action) action.fadeOut(0.5)
     }
-  }, [actions])
+  }, [actions, props])
 
   return (
     <group {...props} dispose={null} ref={group}>
@@ -89,18 +94,72 @@ function Avatar(props: any) {
 
 useGLTF.preload('/models/avatar.glb')
 
+// Loading Component (used inside Canvas)
+function LoadingProgress({ 
+  onLoaded, 
+  onProgress 
+}: { 
+  onLoaded: () => void
+  onProgress: (progress: number) => void
+}) {
+  const { progress, active } = useProgress()
+  
+  useEffect(() => {
+    onProgress(progress)
+    if (!active && progress === 100) {
+      // Small delay to ensure everything is rendered
+      setTimeout(() => {
+        onLoaded()
+      }, 300)
+    }
+  }, [active, progress, onLoaded, onProgress])
+
+  return null
+}
+
+// Loading Spinner UI Component
+function LoaderSpinner({ progress }: { progress?: number }) {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm z-10">
+      <div className="flex flex-col items-center gap-4">
+        <Loader className="w-8 h-8 text-primary animate-spin" />
+        {progress !== undefined && progress < 100 && (
+          <p className="text-sm text-muted-foreground font-mono">
+            {Math.round(progress)}%
+          </p>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // Main Component
 export default function Profile3D({ className }: { className?: string }) {
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [progress, setProgress] = useState(0)
+
   return (
-    <div className={className}>
-      <Canvas camera={{ 
-        position: [0.2, 0.1, 14], 
-        fov: 70, 
-        zoom: 2.5, 
-        }}>
+    <div className={`relative ${className || ''}`}>
+      {!isLoaded && <LoaderSpinner progress={progress} />}
+      <Canvas 
+        camera={{ 
+          position: [0.2, 0.1, 14], 
+          fov: 70, 
+          zoom: 2.5, 
+        }}
+      >
+        <LoadingProgress 
+          onLoaded={() => setIsLoaded(true)} 
+          onProgress={setProgress}
+        />
         <PresentationControls>
           <Stage environment="city" intensity={0.6} adjustCamera={false}>
-              <Avatar position={[-0.5, 6.5, 3]} rotation={[1.5, 3.1, 3.1]} scale={1.5}/>
+              <Avatar 
+                position={[-0.5, 6.5, 3]} 
+                rotation={[1.5, 3.1, 3.1]} 
+                scale={1.5}
+                onLoad={() => setIsLoaded(true)}
+              />
           </Stage>
         </PresentationControls>
       </Canvas>
