@@ -1,5 +1,4 @@
 ---
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
 import type { MarkdownHeading } from 'astro'
 import { Icon } from 'astro-icon/components'
@@ -34,17 +33,16 @@ function cleanupHeading(text: string): string {
 <details
   open
   class={cn(
-    "group",
+    "group w-full",
     inCard 
-      ? "w-full" 
-      : "col-start-2 rounded-xl border p-4 xl:sticky xl:top-26 xl:col-start-1 xl:mr-8 xl:ml-auto xl:h-[calc(100vh-5rem)] xl:max-w-fit xl:rounded-none xl:border-none xl:p-0"
+      ? "" 
+      : "rounded-xl border p-4 xl:rounded-none xl:border-none xl:p-0"
   )}
 >
   <summary
     class="flex cursor-pointer items-center justify-between text-xl font-medium group-open:pb-4"
   >
     <div class="w-full">
-      {!inCard && <hr class="mb-8 hidden md:block" />}
       <h2
         id="skills-title"
         class={cn(
@@ -66,20 +64,11 @@ function cleanupHeading(text: string): string {
     </div>
   </summary>
 
-  <ScrollArea
-    client:load
-    className={cn(
-      "flex flex-col overflow-y-auto",
-      inCard 
-        ? "max-h-[calc(100vh-12rem)] mt-4" 
-        : "max-h-64 xl:max-h-[calc(100vh-8rem)]"
-    )}
-    type="always"
-  >
+  <div class={cn("flex flex-col", inCard ? "mt-4" : "mt-4")}>
     <ul
       class={cn(
         "flex list-none flex-col gap-y-2",
-        inCard ? "px-0" : "px-4 xl:mr-8"
+        inCard ? "px-0" : "px-4 xl:px-0"
       )}
       id="table-of-contents"
     >
@@ -109,7 +98,7 @@ function cleanupHeading(text: string): string {
         ))
       }
     </ul>
-  </ScrollArea>
+  </div>
 </details>
 
 <script>

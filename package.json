@@ -12,13 +12,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/cojocaru-david/portfolio.git"
+    "url": "https://github.com/TharinduEpaz/epazingha-me-v3.git"
   },
   "bugs": {
-    "url": "https://github.com/cojocaru-david/portfolio/issues"
+    "url": "https://github.com/TharinduEpaz/epazingha-me-v3/issues"
   },
-  "homepage": "https://cojocarudavid.me",
-  "name": "cojocarudavid.me",
+  "homepage": "https://www.epasingha.me",
+  "name": "epasingha.me",
   "type": "module",
   "version": "1.1.0",
   "private": false,

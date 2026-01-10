@@ -7,32 +7,12 @@ export async function getAllPosts(): Promise<CollectionEntry<'blog'>[]> {
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
 }
 
-function getDayKey(date: string | Date): string {
-  const d = new Date(date)
-  return d.toISOString().split('T')[0]
-}
-
 export async function getRecentPosts(
   count: number,
 ): Promise<CollectionEntry<'blog'>[]> {
   const posts = await getAllPosts()
-  const postsByDay = posts.reduce<Record<string, CollectionEntry<'blog'>[]>>((acc, post) => {
-    const key = getDayKey(post.data.date)
-    if (!acc[key]) {
-      acc[key] = []
-    }
-    acc[key].push(post)
-    return acc
-  }, {})
-
-  const randomPostsPerDay = Object.values(postsByDay).map(postsForDay => {
-    const randomIndex = Math.floor(Math.random() * postsForDay.length)
-    return postsForDay[randomIndex]
-  })
-
-  const shuffled = randomPostsPerDay.sort(() => Math.random() - 0.5)
-
-  return shuffled.slice(0, count)
+  // getAllPosts already sorts by date descending, so just take the first N posts
+  return posts.slice(0, count)
 }
 
 export async function getAdjacentPosts(currentId: string): Promise<{
