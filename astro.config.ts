@@ -17,7 +17,8 @@ import { pluginCollapsibleSections } from '@expressive-code/plugin-collapsible-s
 import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers'
 
 import tailwindcss from "@tailwindcss/vite";
-import vercel from '@astrojs/vercel';
+import keystatic from '@keystatic/astro';
+import cloudflare from '@astrojs/cloudflare';
 
 function rehypeDemoteH1AndStripTitle() {
   return (tree: any) => {
@@ -62,8 +63,7 @@ export default defineConfig({
           },
       },
     },
-  }), mdx(), react(), icon()],
-
+  }), mdx(), react(), icon(), keystatic()],
   vite: {
     plugins: [tailwindcss() as any],
     resolve: {
@@ -122,6 +122,6 @@ export default defineConfig({
     ],
     remarkPlugins: [remarkMath, remarkEmoji, remarkSectionize],
   },
-
-  adapter: vercel()
+  output:"server",
+  adapter: cloudflare() 
 })
