@@ -1,6 +1,6 @@
 import satori from 'satori'
 import { html } from 'satori-html'
-import { Resvg } from '@resvg/resvg-js'
+import { Resvg } from '@resvg/resvg-wasm'
 import { getCollection } from 'astro:content'
 import type { APIContext } from 'astro'
 import fs from 'fs'
@@ -141,11 +141,7 @@ export async function GET(context: APIContext) {
       loadSystemFonts: true,
       defaultFontFamily: 'Montserrat',
     },
-    logLevel: 'error',
     background: 'transparent',
-    imageRendering: 1,
-    shapeRendering: 2,
-    textRendering: 1,
     dpi: 144,
   }).render()
 

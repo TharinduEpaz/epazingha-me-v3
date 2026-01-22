@@ -70,7 +70,7 @@ export default defineConfig({
       dedupe: ['react', 'react-dom'],
     },
     optimizeDeps: {
-      exclude: ["satori", "satori-html"],
+      exclude: ["satori", "satori-html", "@resvg/resvg-wasm"],
       include: [
         "react",
         "react-dom",
@@ -85,7 +85,15 @@ export default defineConfig({
         "@radix-ui/react-separator",
         "@radix-ui/react-slot"
       ]
-    },    
+    },
+    build: {
+      rollupOptions: {
+        external: (id) => {
+          // Exclude Wasm files from bundling
+          return id.includes('.wasm') || id.includes('@resvg/resvg-wasm/index_bg')
+        },
+      },
+    },
   },
 
   server: {
