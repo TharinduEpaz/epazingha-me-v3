@@ -1,0 +1,213 @@
+---
+title: How to override Keycloak's default login-register pages using React
+description: >-
+  In this article, you are going to learn how to turn the boring Keycloak
+  default login, register, and all other related pages into a modern seamless UI
+  using React components and CSS.
+date: 2026-01-23
+image: ./how-to-override-keycloak-s-default-login-register-pages-using-react-image.png
+tags: []
+authors:
+  - Tharindu Epasingha
+draft: false
+---
+We will use a fantastic project called [Keycloakify](https://www.keycloakify.dev/) to override the default styles, or else we should manually edit the ftl files, and that is too much configuration.
+
+The following is the step-by-step guide illustration of what we are going to do to override the styles of the default login registration pages. **The wonderful thing about this method is that when we change the styling of the login page, it will change all the styles related to “forget password,” “OTP,” and any other page you need automatically.**
+
+
+
+![](./how-to-override-keycloak-s-default-login-register-pages-using-react/content/image.png)
+
+
+
+### **1. Kickstart the Keycloak Theme (Keyclokify) Project**
+
+```
+git clone https://github.com/keycloakify/keycloakify-starter
+
+cd keycloakify-starter
+
+yarn install              
+# You can use any package manager (npm, pnpm, etc.)
+# If you do, delete the .yarn.lock file to avoid conflicts.
+```
+
+The following command is used to select which page you want to edit. When you run this command, there will be a list of pages you can select from.
+
+```
+npx keycloakify add-story 
+
+# Select login.ftl (for example).
+# Always use `npx` to run CLI tools installed in your project.
+# This is standard practice across all modern JS projects,
+# do not try to adapt this command based on your package manager.
+```
+
+Select the page you would like to change here by navigating through arrow keys and pressing enter.
+
+![](./how-to-override-keycloak-s-default-login-register-pages-using-react/content/image.png)
+
+
+
+```
+npm run storybook         
+
+# `npm run <script>`, `yarn <script>`, and `pnpm run <script>`
+# are strictly equivalent. We use `npm run` here for 
+# consistency and because `npm` is always available.
+```
+
+After running this command, you should be able to see the following screen (depending on what story you selected)
+
+
+
+![](./how-to-override-keycloak-s-default-login-register-pages-using-react/content/image.png)
+
+
+
+You can see all the scenarios related to the login listed under the login.ftl story. If you change the styling via CSS, then all of those scenarios will change as well.
+
+### **3. Style It Up with Custom CSS**
+
+* Create a CSS file in `src/login/main.css`
+* Import it to `KcPage.tsx`
+* Inspect the elements on the login page and get the CSS class with kc as a prefix.
+* KC classes are for adding custom styles. You can write CSS for the KC classes and see the changes happening on the page in real-time.
+
+
+
+![](./how-to-override-keycloak-s-default-login-register-pages-using-react/content/image.png)
+
+
+
+Add the following CSS to add your custom company logo after the sign-in text. Likewise, we have so much flexibility when it comes to styling. You can add a custom span or div element in `Kcpage.tsx`. We can style with `display : none` to remove the elements we do not need. **Actually, you can use an LLM to easily modify these styles and create the desired look you want, so do not worry about the CSS.**
+
+```
+h1#kc-page-title::after {
+    content: "";
+    display: block;
+    width: 150px;
+    height: 150px;
+    margin: 20px auto 0;
+    background-image: url(../img/college-logo.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+```
+
+### **4. Build the theme and generate the \`.jar\`**
+
+Now you need to output your project as a JAR file, which Keycloak understands.
+
+```
+npm run build-keycloak-theme
+```
+
+### **5. Deploy the JAR into Keycloak Providers**
+
+Keycloak providers are modular plugins that allow you to extend the server’s functionality, such as connecting to legacy user databases, adding custom authentication steps, or listening to login events without modifying the core source code.
+
+[\
+](https://medium.com/plans?source=upgrade_membership---post_li_non_moc_upsell--1ae8a2650fb5---------------------------------------)They rely on a standard Java pattern called the **Service Provider Interface (SPI),** where you implement specific interfaces in your code and **package them into a JAR file.**
+
+To “introduce” a provider, you simply place this JAR into Keycloak’s `providers` directory.
+
+### **How to modify the docker-compose.yml to include the providers**
+
+Following is my `docker-compose.yml` ⁣I used to add provider jars into the Keycloak installation. After modifying the YML file, you need to rebuild and rerun the container.
+
+Following is my `docker-compose.yml` file. See the line containing `./themes:/opt/keycloak/providers/` you should also add it and place the jar file inside the `themes` folder.
+
+```
+version: '3.7'
+
+services:
+  postgres:
+    image: postgres:16.2
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak_db
+      POSTGRES_USER: keycloak_user
+      POSTGRES_PASSWORD: keycloak_password
+    ports:
+      - 5432:5432
+    networks:
+      - keycloak_network
+
+  keycloak:
+
+    image: quay.io/keycloak/keycloak:26.0.4
+    command: start-dev
+
+    environment:
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 8080
+      KC_HTTP_ENABLED: true
+      KC_HEALTH_ENABLED: true
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HOSTNAME_STRICT: false
+
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres/keycloak_db
+      KC_DB_USERNAME: keycloak_user
+      KC_DB_PASSWORD: keycloak_password
+      KC_SPI_THEME_STATIC_MAX_AGE: -1
+      KC_SPI_THEME_CACHE_THEMES: false
+      KC_SPI_THEME_CACHE_TEMPLATES: false
+    ports:
+      - 8080:8080
+    volumes:
+      - ./themes:/opt/keycloak/providers/
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    networks:
+      - keycloak_network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  keycloak_network:
+    driver: bridge
+```
+
+
+
+### **5. Change the login theme via the admin console.**
+
+`Realm Settings → Themes → Select keyclokify-starter` in the dropdown. Thereafter, you will see the beautiful login page you created.
+
+
+
+![](./how-to-override-keycloak-s-default-login-register-pages-using-react/content/image.png)
+
+
+
+## **A few more issues I faced**
+
+### **Can I add a story again ? (after selecting for the first time)**
+
+Yes, simply run `npx keycloakify add-story `again to add whatever page you need.
+
+### **Can I add custom divs (like a navbar) to the login UI with logo ?**
+
+You can add your custom divs and other elements in `Kcpage.tsx`
+
+### **Can I use tailwind CSS ?**
+
+Yes, you can use modern component libraries like Shadcn and MUI. See the following link for more details.
+
+[https://docs.keycloakify.dev/starter-themes/shadcn-ui-tailwind?source=post\_page-----1ae8a2650fb5---------------------------------------](https://docs.keycloakify.dev/starter-themes/shadcn-ui-tailwind?source=post_page-----1ae8a2650fb5---------------------------------------)
+
+
+
+> *This article took days of research, driven by a genuine desire to help fellow developers. If you found it useful, I’d appreciate a clap and let me know in the comments if there’s anything I missed.*
+
+Written with ❤️ for the dev community by [Epazingha](https://medium.com/u/a4e5f6cd55b1?source=post_page---user_mention--1ae8a2650fb5---------------------------------------)

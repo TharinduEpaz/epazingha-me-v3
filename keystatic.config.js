@@ -20,7 +20,7 @@ export default config({
         date: fields.date({ label: 'Date' }),
         image: fields.image({
           label: 'Cover Image',
-          directory: 'public/images/blog',
+          directory: 'src/content/blog',
           publicPath: '/images/blog/',
         }),
         tags: fields.array(fields.text({ label: 'Tag' }), {
