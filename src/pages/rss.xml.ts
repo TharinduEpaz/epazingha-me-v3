@@ -1,3 +1,5 @@
+export const prerender = true;
+
 import { SITE } from '@/consts';
 import rss from '@astrojs/rss';
 import type { APIRoute } from 'astro';

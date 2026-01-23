@@ -130,6 +130,6 @@ export default defineConfig({
     ],
     remarkPlugins: [remarkMath, remarkEmoji, remarkSectionize],
   },
-  output:"static",
+  output:"server",
   adapter: cloudflare() 
 })
