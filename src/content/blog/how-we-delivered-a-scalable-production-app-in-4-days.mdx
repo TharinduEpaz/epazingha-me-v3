@@ -42,17 +42,17 @@ Think of Refine as a pre-built CRUD application that you can integrate and custo
 
 Out-of-the-box support for live / real-time applications\
 \
-![](./how-we-delivered-a-scalable-production-app-in-4-days/content/image.png)
+![](./how-we-delivered-a-scalable-production-app-in-4-days/image.png)
 
 ### **How to Configure Refine Framework to your business requirement**
 
-![](./how-we-delivered-a-scalable-production-app-in-4-days/content/image.png)
+![](./how-we-delivered-a-scalable-production-app-in-4-days/image.png)
 
 Following code is a sample data provider that seamlessly integrate our back end API into the front end data. Methods inside this provider will work as translators between them.
 
 ### **Refine Architecture**
 
-![](./how-we-delivered-a-scalable-production-app-in-4-days/content/image.png)
+![](./how-we-delivered-a-scalable-production-app-in-4-days/image.png)
 
 * **Refine CORE ( The “View” Layer)**
 
@@ -72,62 +72,65 @@ Your actual server or database interface. It receives the standard HTTP request,
 
 ### **Inside a Data Provider: The Actual Code**
 
-`import { DataProvider } from "@refinedev/core";`\
-`import { axiosInstance } from "@/lib/axios"; // Your configured axios`\
-`import { API_URL } from "./constants";`\
-\
-`export const dataProvider: DataProvider = {`\
-`  // 1. Get List: Fetches a list of items with pagination and filters`\
-`  getList: async ({ resource, pagination, filters }) => {`\
-`    const params = new URLSearchParams();`\
-\
-`    // Handle Pagination`\
-`    if (pagination) {`\
-`      params.append("page", String(pagination.current));`\
-`      params.append("per_page", String(pagination.pageSize));`\
-`    }`\
-\
-`    // Handle Filters (Simple equals check)`\
-`    filters?.forEach((filter) => {`\
-`      if ("field" in filter && filter.operator === "eq") {`\
-`        params.append(filter.field, String(filter.value));`\
-`      }`\
-`    });`\
-\
-``    const { data } = await axiosInstance.get(`${API_URL}/${resource}?${params.toString()}`);``\
-\
-`    return {`\
-`      data: data.data,`\
-`      total: data.total,`\
-`    };`\
-`  },`\
-\
-`  // 2. Get One: Fetches a single item by ID`\
-`  getOne: async ({ resource, id }) => {`\
-``    const { data } = await axiosInstance.get(`${API_URL}/${resource}/${id}`);``\
-`    return { data: data.data };`\
-`  },`\
-\
-`  // 3. Create: Creates a new item`\
-`  create: async ({ resource, variables }) => {`\
-``    const { data } = await axiosInstance.post(`${API_URL}/${resource}`, variables);``\
-`    return { data: data.data };`\
-`  },`\
-\
-`  // 4. Update: Updates an existing item`\
-`  update: async ({ resource, id, variables }) => {`\
-``    const { data } = await axiosInstance.put(`${API_URL}/${resource}/${id}`, variables);``\
-`    return { data: data.data };`\
-`  },`\
-\
-`  // 5. Delete: Deletes an item`\
-`  deleteOne: async ({ resource, id }) => {`\
-``    const { data } = await axiosInstance.delete(`${API_URL}/${resource}/${id}`);``\
-`    return { data: data.data };`\
-`  },`\
-\
-`  getApiUrl: () => API_URL,`\
-`};`
+```
+import { DataProvider } from "@refinedev/core";
+import { axiosInstance } from "@/lib/axios"; // Your configured axios
+import { API_URL } from "./constants";
+
+export const dataProvider: DataProvider = {
+  // 1. Get List: Fetches a list of items with pagination and filters
+  getList: async ({ resource, pagination, filters }) => {
+    const params = new URLSearchParams();
+
+    // Handle Pagination
+    if (pagination) {
+      params.append("page", String(pagination.current));
+      params.append("per_page", String(pagination.pageSize));
+    }
+
+    // Handle Filters (Simple equals check)
+    filters?.forEach((filter) => {
+      if ("field" in filter && filter.operator === "eq") {
+        params.append(filter.field, String(filter.value));
+      }
+    });
+
+    const { data } = await axiosInstance.get(`${API_URL}/${resource}?${params.toString()}`);
+
+    return {
+      data: data.data,
+      total: data.total,
+    };
+  },
+
+  // 2. Get One: Fetches a single item by ID
+  getOne: async ({ resource, id }) => {
+    const { data } = await axiosInstance.get(`${API_URL}/${resource}/${id}`);
+    return { data: data.data };
+  },
+
+  // 3. Create: Creates a new item
+  create: async ({ resource, variables }) => {
+    const { data } = await axiosInstance.post(`${API_URL}/${resource}`, variables);
+    return { data: data.data };
+  },
+
+  // 4. Update: Updates an existing item
+  update: async ({ resource, id, variables }) => {
+    const { data } = await axiosInstance.put(`${API_URL}/${resource}/${id}`, variables);
+    return { data: data.data };
+  },
+
+  // 5. Delete: Deletes an item
+  deleteOne: async ({ resource, id }) => {
+    const { data } = await axiosInstance.delete(`${API_URL}/${resource}/${id}`);
+    return { data: data.data };
+  },
+
+  getApiUrl: () => API_URL,
+};
+
+```
 
 ![](./how-we-delivered-a-scalable-production-app-in-4-days/content/image.png)
 
