@@ -21,11 +21,12 @@ draft: false
 * Automatic user generation + Multi outlet wise login
 * Login and Secure Auth with separate admin view of all the information.
 
-**Quick overview on Tech Stack and Architecture\
+**Quick overview on Tech Stack and Architecture**\
 \
-![](./how-we-delivered-a-scalable-production-app-in-4-days/content/image.png)\
-\&#xA;**&#x57;e utilized the power of the Refine framework to build this application. Refine was created to solve the overhead of building the same CRUD interfaces repeatedly.
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+![](./how-we-delivered-a-scalable-production-app-in-4-days/image.png)
+---------------------------------------------------------------------
+
+## We utilized the power of the Refine framework to build this application. Refine was created to solve the overhead of building the same CRUD interfaces repeatedly.
 
 Refine can be used with both React and Next.js. We can choose the UI library and few other options in the initiation of the project. For this particular project we utilized **Shadcn UI, Tailwind CSS and Jotai** state management.
 
@@ -52,8 +53,6 @@ Following code is a sample data provider that seamlessly integrate our back end 
 ### **Refine Architecture**
 
 ![](./how-we-delivered-a-scalable-production-app-in-4-days/content/image.png)
-
-
 
 * **Refine CORE ( The “View” Layer)**
 
@@ -132,11 +131,7 @@ Your actual server or database interface. It receives the standard HTTP request,
 
 ![](./how-we-delivered-a-scalable-production-app-in-4-days/content/image.png)
 
-
-
 ### **Access Control: Show or Hide UI by Role**
-
-
 
 ```
 const ACCESS_DENY_MAP: Record<string, Record<string, DenyRule>> = {
@@ -195,8 +190,6 @@ export const accessControlProvider: AccessControlProvider = {
       }}
     >
 ```
-
-
 
 ## **Back end Architecture — Hono**
 
@@ -261,6 +254,6 @@ Our team members were skilled in Java Spring Boot, FastAPI, and AWS. But if we h
 
 We did not worry about deployments at all because our pipelines, which were handled using GitHub Actions, seamlessly integrated with Cloudflare, giving us faster deployment across dev and prod environments. This allows us to do critical changes to our application code easier and fast with the time we had for user acceptance testing.
 
-*This did not mean being careless. Our philosophy was to mix the perfect amount of everything to balance the strict timeline with the best quality output possible.\
+*This did not mean being careless. Our philosophy was to mix the perfect amount of everything to balance the strict timeline with the best quality output possible.*\
 \
-\&#xA;*&#x57;ritten with ❤️ for the dev community by [Epazingha](https://medium.com/u/a4e5f6cd55b1?source=post_page---user_mention--404d1ec61535---------------------------------------)**\&#xA;**
+Written with ❤️ for the dev community by [Epazingha](https://medium.com/u/a4e5f6cd55b1?source=post_page---user_mention--404d1ec61535---------------------------------------)
