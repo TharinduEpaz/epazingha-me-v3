@@ -21,7 +21,7 @@ export default config({
         image: fields.image({
           label: 'Cover Image',
           directory: 'src/content/blog',
-          publicPath: '/images/blog/',
+          publicPath: './',
         }),
         tags: fields.array(fields.text({ label: 'Tag' }), {
           label: 'Tags',
@@ -34,6 +34,52 @@ export default config({
         draft: fields.checkbox({ label: 'Draft', defaultValue: false }),
         content: fields.mdx({
           label: 'Content',
+          options: {
+            image: {
+              directory: 'src/content/blog',
+              publicPath: './',
+            },
+          },
+        }),
+      },
+    }),
+    projects: collection({
+      label: 'Projects',
+      slugField: 'name',
+      path: 'src/content/projects/*',
+      format: { contentField: 'content' },
+      schema: {
+        name: fields.slug({ name: { label: 'Name' } }),
+        description: fields.text({ label: 'Description', multiline: true }),
+        tags: fields.array(fields.text({ label: 'Tag' }), {
+          label: 'Tags',
+          itemLabel: (props) => props.value,
+        }),
+        image: fields.image({
+          label: 'Cover Image',
+          directory: 'src/content/projects',
+          publicPath: './',
+        }),
+        link: fields.url({
+          label: 'Project Link (URL)',
+          validation: { isRequired: false },
+        }),
+        startDate: fields.date({
+          label: 'Start Date',
+          validation: { isRequired: false },
+        }),
+        endDate: fields.date({
+          label: 'End Date',
+          validation: { isRequired: false },
+        }),
+        content: fields.mdx({
+          label: 'Content',
+          options: {
+            image: {
+              directory: 'src/content/projects',
+              publicPath: './',
+            },
+          },
         }),
       },
     }),
