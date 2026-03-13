@@ -16,12 +16,12 @@ export default config({
       format: { contentField: 'content' },
       schema: {
         title: fields.slug({ name: { label: 'Title' } }),
-        description: fields.text({ label: 'Description', multiline: true }),
+        description: fields.text({ label: 'Description', multiline: true, validation: { isRequired: true } }),
         date: fields.date({ label: 'Date' }),
         image: fields.image({
           label: 'Cover Image',
-          directory: 'src/content/blog',
-          publicPath: './',
+          directory: 'src/content/blog/{slug}',
+          publicPath: './{slug}/',
         }),
         tags: fields.array(fields.text({ label: 'Tag' }), {
           label: 'Tags',
@@ -36,8 +36,8 @@ export default config({
           label: 'Content',
           options: {
             image: {
-              directory: 'src/content/blog',
-              publicPath: './',
+              directory: 'src/content/blog/{slug}',
+              publicPath: './{slug}/',
             },
           },
         }),
