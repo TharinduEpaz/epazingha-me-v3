@@ -1,39 +1,40 @@
 import satori from 'satori'
 import { html } from 'satori-html'
-import { Resvg } from '@resvg/resvg-wasm'
+import { Resvg, initWasm } from '@resvg/resvg-wasm'
 import { getCollection } from 'astro:content'
 import type { APIContext } from 'astro'
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
+import { SITE } from '@/consts'
 
-const MontserratRegular = fs.readFileSync(
-  path.resolve('./public/fonts2/_montserrat_regular.ttf'),
-)
-const MontserratBold = fs.readFileSync(
-  path.resolve('./public/fonts2/_montserrat_bold.ttf'),
-)
-
-const dimensions = {
-  width: 1200,
-  height: 630,
+// --- one-time WASM init (module scope, reused across all prerendered images) ---
+let wasmReady: Promise<void> | null = null
+function ensureWasm() {
+  if (!wasmReady) {
+    const wasm = fs.readFileSync(
+      path.resolve('./node_modules/@resvg/resvg-wasm/index_bg.wasm'),
+    )
+    wasmReady = initWasm(wasm)
+  }
+  return wasmReady
 }
 
-const colors = {
-  background: {
-    from: '#2c2c2c',
-    via: '#181818',
-    to: '#000000',
-  },
-  text: {
-    primary: '#ffffff',
-    secondary: '#b8b8b8',
-    muted: '#7a7a7a',
-  },
-  accent: {
-    primary: 'rgba(112, 112, 112, 0.5)',
-    secondary: 'rgba(21, 21, 21, 0.8)',
-    highlight: 'rgba(255, 255, 255, 0.05)',
-  },
+const RajBold = fs.readFileSync(path.resolve('./public/fonts2/_montserrat_bold.ttf'))
+const RajRegular = fs.readFileSync(
+  path.resolve('./public/fonts2/_montserrat_regular.ttf'),
+)
+
+const dimensions = { width: 1200, height: 630 }
+
+const C = {
+  bg: '#1c1f1a',
+  panel: '#20241d',
+  card: '#242920',
+  line: '#3a4033',
+  accent: '#ff6a00',
+  ink: '#eef0ea',
+  body: '#d9dcd2',
+  faint: '#7a8270',
 }
 
 interface Props {
@@ -45,64 +46,40 @@ interface Props {
 
 export async function GET(context: APIContext) {
   const { title, date, description, tags } = context.props as Props
+  await ensureWasm()
 
-  const formattedDate = date.toLocaleDateString('en-US', { dateStyle: 'full' })
+  const formattedDate = date
+    .toLocaleDateString('en-US', { dateStyle: 'full' })
+    .toUpperCase()
 
-  const tagElements = tags
+  const tagElements = (tags ?? [])
+    .slice(0, 5)
     .map(
       (tag) =>
-        `<div style="background: rgba(21, 21, 21, 0.5); color: #e0e0e0; font-size: 14px; font-weight: 500; padding: 6px 14px; border-radius: 18px; margin: 4px; display: flex; border: 1px solid rgba(255, 255, 255, 0.1);">#${tag}</div>`,
+        `<div style="display:flex;border:1px solid ${C.line};color:${C.faint};font-size:18px;padding:6px 14px;margin-right:10px;">#${tag}</div>`,
     )
     .join('')
 
   const markup = html(
-    `<div
-      style="display: flex; flex-direction: column; width: 100%; height: 100%; border-radius: 24px; overflow: hidden; color: white; border: 1px solid rgba(255, 255, 255, 0.12); position: relative;background: #171717;"
-    >
-      
-      <div style="position: absolute;display: flex; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.01); opacity: 0.6;"></div>
+    `<div style="display:flex;flex-direction:column;width:100%;height:100%;background:${C.bg};color:${C.body};font-family:'Montserrat';position:relative;padding:64px;">
+      <div style="position:absolute;top:28px;left:28px;width:26px;height:26px;border-top:4px solid ${C.accent};border-left:4px solid ${C.accent};display:flex;"></div>
+      <div style="position:absolute;bottom:28px;right:28px;width:26px;height:26px;border-bottom:4px solid ${C.accent};border-right:4px solid ${C.accent};display:flex;"></div>
 
-      
-      <div style="position: absolute; width: 350px; height: 350px;display: flex; background: radial-gradient(circle, rgba(250, 255, 100, 0.12) 0%, transparent 70%); top: -100px; right: -50px; border-radius: 50%;"></div>
+      <div style="display:flex;font-size:20px;letter-spacing:3px;color:${C.faint};">// FIELD REPORT · ${formattedDate}</div>
 
-      
-      <div style="flex: 4; padding: 48px 50px; display: flex; flex-direction: column; justify-content: center; position: relative;">
-        <div style="color: ${colors.text.secondary}; font-size: 16px; display: flex; font-weight: 400; letter-spacing: 0.05em; text-transform: uppercase;">
-          ${formattedDate}
-        </div>
+      <div style="display:flex;font-size:64px;font-weight:700;color:${C.ink};line-height:1.12;margin-top:26px;width:95%;">${title}</div>
 
-        <div
-          style="font-size: 60px; display: flex; font-weight: 800; color: ${colors.text.primary}; line-height: 1.15; margin-top: 18px; letter-spacing: -0.01em; width: 95%;"
-        >
-          ${title}
-        </div>
+      <div style="display:flex;width:90px;height:5px;background:${C.accent};margin:30px 0;"></div>
 
-        <div style="width: 70px; height: 4px; display: flex; background: linear-gradient(90deg, rgba(255,255,255,0.7), rgba(255,255,255,0.2)); margin: 20px 0; border-radius: 2px;"></div>
+      <div style="display:flex;font-size:26px;line-height:1.5;color:${C.body};width:88%;">${description}</div>
 
-        <div style="color: ${colors.text.secondary}; font-size: 20px;display: flex; margin-top: 16px; line-height: 1.6; width: 90%;">
-          ${description}
-        </div>
+      <div style="display:flex;margin-top:30px;">${tagElements}</div>
 
-        <div style="display: flex; margin-top: 28px; flex-wrap: wrap;">
-          ${tagElements}
-        </div>
-      </div>
-
-      
-      <div
-        style="flex: 1; border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; padding: 32px 50px; align-items: center; justify-content: space-between; font-size: 20px; background: rgba(0,0,0,0.3); position: relative;"
-      >
-        <div style="display: flex; align-items: center;">
-          <div style="width: 6px; height: 28px;display: flex; background: rgb(27,27,27); margin-right: 16px; border-radius: 3px;"></div>
-          <span style="color: ${colors.text.secondary}; font-weight: 500; letter-spacing: 0.02em;">cojocarudavid.me</span>
-        </div>
-
-        <div style="display: flex; align-items: center; background: rgba(21,21,21, 0.8); border-radius: 18px; padding: 12px 22px; border: 1px solid rgba(255, 255, 255, 0.1);">
-          <img src="https://res.cloudinary.com/dtkix7qix/image/upload/v1744410119/logo_wkn0ie.png" alt="Logo" style="width: 64px; height: 48px;" width="64" height="48" />
-          <div style="display: flex; flex-direction: column; margin-left: 18px; border-left: 1px solid rgba(255, 255, 255, 0.12); padding-left: 18px;">
-            <span style="color: ${colors.text.primary}; font-weight: 600; font-size: 18px;">David Cojocaru</span>
-            <span style="color: ${colors.text.muted}; font-size: 14px;">cojocaru-david</span>
-          </div>
+      <div style="display:flex;position:absolute;bottom:56px;left:64px;align-items:center;">
+        <div style="display:flex;width:8px;height:34px;background:${C.accent};margin-right:18px;"></div>
+        <div style="display:flex;flex-direction:column;">
+          <div style="display:flex;font-size:26px;font-weight:700;color:${C.ink};">${SITE.author}</div>
+          <div style="display:flex;font-size:18px;color:${C.faint};letter-spacing:1px;">epasingha.me</div>
         </div>
       </div>
     </div>`,
@@ -110,73 +87,40 @@ export async function GET(context: APIContext) {
 
   const svg = await satori(markup, {
     fonts: [
-      {
-        name: 'Montserrat',
-        data: MontserratRegular,
-        weight: 400,
-        style: 'normal',
-      },
-      {
-        name: 'Montserrat',
-        data: MontserratBold,
-        weight: 700,
-        style: 'normal',
-      },
+      { name: 'Montserrat', data: RajRegular, weight: 400, style: 'normal' },
+      { name: 'Montserrat', data: RajBold, weight: 700, style: 'normal' },
     ],
     height: dimensions.height,
     width: dimensions.width,
-    debug: false,
   })
 
-  const image = new Resvg(svg, {
-    fitTo: {
-      mode: 'width',
-      value: dimensions.width,
-    },
-    font: {
-      fontFiles: [
-        MontserratRegular.toString('base64'),
-        MontserratBold.toString('base64'),
-      ],
-      loadSystemFonts: true,
-      defaultFontFamily: 'Montserrat',
-    },
-    background: 'transparent',
-    dpi: 144,
-  }).render()
+  const png = new Resvg(svg, {
+    fitTo: { mode: 'width', value: dimensions.width },
+    background: C.bg,
+  })
+    .render()
+    .asPng()
 
-  const pngData = image.asPng()
-
-  return new Response(pngData as any, {
+  return new Response(png as unknown as BodyInit, {
     headers: {
       'Content-Type': 'image/png',
-      'Content-Disposition': 'inline; filename="social-card.png"',
       'Cache-Control': 'public, max-age=31536000, immutable',
-      'Content-Length': pngData.length.toString(),
-      'Surrogate-Key': tags.join(' '),
-      'Query-String-Hash': title.toLowerCase().replace(/\s+/g, '-'),
-      'Cache-Tag': 'social-image',
-      'X-Content-Type-Options': 'nosniff',
-      'Last-Modified': new Date().toUTCString(),
-      Expires: new Date(Date.now() + 31536000000).toUTCString(),
-      ETag: `"${pngData.length}-${Date.now()}"`,
-      'Access-Control-Allow-Origin': '*',
-      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+      'Content-Length': png.length.toString(),
     },
   })
 }
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog')
-  return posts.map((post) => ({
-    params: {
-      id: post.id,
-    },
-    props: {
-      title: post.data.title,
-      date: post.data.date,
-      description: post.data.description,
-      tags: post.data.tags,
-    },
-  }))
+  return posts
+    .filter((post) => !post.data.draft)
+    .map((post) => ({
+      params: { id: post.id },
+      props: {
+        title: post.data.title,
+        date: post.data.date,
+        description: post.data.description,
+        tags: post.data.tags ?? [],
+      },
+    }))
 }

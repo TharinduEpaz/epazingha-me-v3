@@ -1,17 +1,43 @@
 ---
-import { SOCIAL_LINKS } from '@/consts'
-import SocialIcons from './SocialIcons.astro'
+import { Icon } from 'astro-icon/components'
+import { SITE, SOCIAL_LINKS, ICON_MAP } from '@/consts'
+
+const year = new Date().getFullYear()
 ---
 
-<footer class="py-4" aria-label="Footer" role="contentinfo" id="footer">
+<footer class="mt-auto border-t-2 border-line bg-panel-alt">
   <div
-    class="mx-auto flex max-w-5xl flex-col items-center justify-center gap-y-2 px-4 sm:flex-row sm:justify-between"
+    class="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-6"
   >
-    <SocialIcons links={SOCIAL_LINKS} />
-    <div class="flex flex-wrap items-center justify-center gap-x-2 text-center">
-      <span class="text-muted-foreground text-sm" aria-label="copyright">
-        2020 - {new Date().getFullYear()} &copy; All rights reserved.
-      </span>
+    <div>
+      <p class="font-mono text-[11px] tracking-widest text-faint">
+        // END OF TRANSMISSION
+      </p>
+      <p class="mt-1 font-display text-sm font-bold tracking-wide text-ink">
+        {SITE.author} · {SITE.location}
+      </p>
+      <p class="mt-1 font-mono text-[11px] tracking-wide text-faint">
+        © {year} · ALL SYSTEMS OPERATIONAL
+      </p>
     </div>
+
+    <ul class="flex flex-wrap items-center gap-2">
+      {
+        SOCIAL_LINKS.map((social) => (
+          <li>
+            <a
+              href={social.href}
+              target={social.href.startsWith('http') ? '_blank' : undefined}
+              rel="noopener noreferrer"
+              aria-label={social.label}
+              title={social.label}
+              class="flex h-9 w-9 items-center justify-center border-2 border-line text-faint transition-colors hover:border-accent hover:text-accent"
+            >
+              <Icon name={ICON_MAP[social.label] ?? 'lucide:link'} class="h-4 w-4" />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
   </div>
 </footer>

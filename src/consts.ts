@@ -4,7 +4,7 @@ export const SITE: Site = {
   title: 'Tharindu Epasingha',
   description:
     "I love to code, engineer and craft applications with one clear goal of creating real-world impact through clean code, open-source contributions, and community-driven solutions.\n\nBeyond the screen, you'll find me cultivating patience through bonsai, pushing limits at the gym, and clearing my head on long runs and mountain hikes. 🌱🏃‍♂️⛰️\n\nBuilding software. Growing impact. Living with purpose.",
-  href: 'https://www.epasingha.com',
+  href: 'https://www.epasingha.me',
   author: 'Tharindu Epasingha',
   locale: 'en-US',
   location: 'Sri Lanka',

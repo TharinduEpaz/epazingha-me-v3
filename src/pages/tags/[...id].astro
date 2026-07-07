@@ -1,60 +1,56 @@
 ---
-import Breadcrumbs from '@/components/Breadcrumbs.astro'
-import PageHead from '@/components/PageHead.astro'
-import BlogCard from '@/components/react/blog-card'
 import Layout from '@/layouts/Layout.astro'
 import { getAllTags, getPostsByTag } from '@/lib/data-utils'
-import { Icon } from 'astro-icon/components'
+import { formatDate } from '@/lib/utils'
 
 export async function getStaticPaths() {
-  const tagMap = await getAllTags()
-  const uniqueTags = Array.from(tagMap.keys())
-
-  return Promise.all(
-    uniqueTags.map(async (tag) => {
-      const posts = await getPostsByTag(tag)
-      return {
-        params: { id: tag },
-        props: {
-          tag,
-          posts,
-        },
-      }
-    })
-  )
+  const tags = await getAllTags()
+  return [...tags.keys()].map((tag) => ({
+    params: { id: tag },
+    props: { tag },
+  }))
 }
 
-const { tag, posts } = Astro.props
-const currentUrl = Astro.url;
+const { tag } = Astro.props as { tag: string }
+const posts = await getPostsByTag(tag)
 ---
 
-<Layout canonicalUrl={currentUrl}>
-  <PageHead
-    slot="head"
-    title={`Posts tagged with "${tag}"`}
-    description={`A collection of posts tagged with ${tag}.`}
-  />
-  <Breadcrumbs
-    items={[
-      { href: '/tags', label: 'Tags', icon: 'lucide:tags' },
-      { label: tag, icon: 'lucide:tag' },
-    ]}
-  />
+<Layout title={`#${tag}`} description={`Field reports tagged #${tag}.`}>
+  <a
+    href="/tags"
+    class="mb-6 inline-flex items-center gap-2 font-mono text-[11px] tracking-widest text-faint hover:text-accent"
+  >
+    &#9666; ALL TAGS
+  </a>
 
-  <div class="flex flex-wrap items-center gap-2">
-    <h1 class="text-3xl font-medium">Posts tagged with</h1>
-    <span
-      class="bg-secondary flex items-center gap-x-1 rounded-full px-4 py-2 text-2xl font-medium"
-    >
-      <Icon name="lucide:hash" class="size-6 -translate-x-0.5" />{tag}
-    </span>
-  </div>
+  <p class="mb-1.5 font-mono text-[11px] tracking-[2px] text-faint">
+    // FILTER
+  </p>
+  <h1 class="mb-3 font-display text-4xl font-bold tracking-wide text-ink">
+    #{tag}
+  </h1>
+  <p class="mb-10 font-mono text-sm tracking-wide text-muted">
+    {posts.length} transmission{posts.length === 1 ? '' : 's'} matched.
+  </p>
 
-  <ul class="flex flex-col gap-y-4">
+  <ul class="flex flex-col gap-4">
     {
       posts.map((post) => (
         <li>
-          <BlogCard entry={post} />
+          <a
+            href={`/blog/${post.id}`}
+            class="group block border border-l-[3px] border-line border-l-accent bg-card px-5 py-5 transition-shadow hover:shadow-[0_4px_14px_rgba(0,0,0,0.35)]"
+          >
+            <div class="mb-1.5 font-mono text-[11px] tracking-widest text-faint">
+              {formatDate(post.data.date).toUpperCase()}
+            </div>
+            <div class="font-display text-xl font-bold tracking-wide text-ink transition-colors group-hover:text-accent">
+              {post.data.title}
+            </div>
+            <p class="mt-2 text-[15px] leading-relaxed text-muted">
+              {post.data.description}
+            </p>
+          </a>
         </li>
       ))
     }

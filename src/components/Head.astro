@@ -1,61 +1,85 @@
 ---
 import { SITE } from '@/consts'
-import Favicons from './Favicons.astro'
+
+interface Props {
+  title?: string
+  description?: string
+  image?: string
+  type?: 'website' | 'article'
+}
+
+const {
+  title,
+  description = SITE.description,
+  image = '/ogImage.png',
+  type = 'website',
+} = Astro.props
+
+const pageTitle = title ? `${title} — ${SITE.title}` : SITE.title
+const canonical = new URL(Astro.url.pathname, Astro.site).href
+const ogImage = new URL(image, Astro.site).href
+const cleanDescription = description.split('\n')[0]
 ---
 
-<head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, user-scalable=yes"
-  />
-  <meta name="generator" content={Astro.generator} />
-  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-  <meta name="googlebot" content="index, follow" />
-  <meta name="google" content="notranslate" />
-  <meta name="revisit-after" content="1 days" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- SEO Enhancement Tags -->
-  <meta name="author" content={SITE.author} />
-  <meta name="publisher" content={SITE.title} />
-  <meta name="language" content={SITE.locale} />
-  <meta name="geo.region" content="RO" />
-  <meta name="geo.placename" content={SITE.location} />
+<!-- Set theme before paint to avoid a flash of the wrong theme -->
+<script is:inline>
+  ;(function () {
+    try {
+      var t = localStorage.getItem('theme')
+      if (t !== 'light' && t !== 'dark') {
+        t = window.matchMedia('(prefers-color-scheme: light)').matches
+          ? 'light'
+          : 'dark'
+      }
+      document.documentElement.setAttribute('data-theme', t)
+    } catch (e) {
+      document.documentElement.setAttribute('data-theme', 'dark')
+    }
+  })()
+</script>
+<meta name="generator" content={Astro.generator} />
 
-  <!-- Mobile and PWA Tags -->
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content={SITE.title} />
-  <meta
-    name="format-detection"
-    content="telephone=no,date=no,address=no,email=no,url=no"
-  />
+<title>{pageTitle}</title>
+<meta name="description" content={cleanDescription} />
+<meta name="author" content={SITE.author} />
+<link rel="canonical" href={canonical} />
 
-  <!-- Theme Colors -->
-  <meta
-    name="theme-color"
-    content="#121212"
-    media="(prefers-color-scheme: dark)"
-  />
-  <meta
-    name="theme-color"
-    content="#ffffff"
-    media="(prefers-color-scheme: light)"
-  />
-  <meta name="msapplication-TileColor" content="#121212" />
+<!-- Open Graph -->
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={SITE.title} />
+<meta property="og:title" content={pageTitle} />
+<meta property="og:description" content={cleanDescription} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:locale" content={SITE.locale} />
 
-  <!-- Feed link -->
-  <link rel="manifest" href="/site.webmanifest" />
-  <link
-    rel="alternate"
-    type="application/rss+xml"
-    title={`${SITE.title} RSS Feed`}
-    href={new URL('rss.xml', Astro.site)}
-  />
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={pageTitle} />
+<meta name="twitter:description" content={cleanDescription} />
+<meta name="twitter:image" content={ogImage} />
 
-  <Favicons />
+<!-- Icons -->
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="icon" href="/logo.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+<meta name="theme-color" content="#1c1f1a" />
 
-  <slot />
-</head>
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
+  rel="stylesheet"
+/>
+
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title={`${SITE.title} — RSS`}
+  href="/rss.xml"
+/>

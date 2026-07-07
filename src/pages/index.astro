@@ -1,113 +1,312 @@
 ---
-export const prerender = true;
-
-import Link from '@/components/Link.astro'
-import PageHead from '@/components/PageHead.astro'
-import BlogCard from '@/components/react/blog-card'
-import Skills from '@/components/react/skills'
-import { buttonVariants } from '@/components/ui/button'
-import Profile3D from '@/components/react/profile-3d'
 import Layout from '@/layouts/Layout.astro'
-import { getRecentPosts } from '@/lib/data-utils'
+import ThemeToggle from '@/components/ThemeToggle.astro'
+import { getRecentPosts, getAllProjects } from '@/lib/data-utils'
 import { SITE } from '@/consts'
-import SriLankaSVG from '@/components/react/Srilanka'
 
-const blog = await getRecentPosts(3)
-const currentUrl = Astro.url;
+const recentPosts = await getRecentPosts(4)
+const projects = await getAllProjects()
+
+const now = new Date()
+function projectStatus(endDate?: Date) {
+  if (!endDate || endDate > now)
+    return { label: 'ACTIVE', color: 'text-active', dot: 'bg-active' }
+  return { label: 'COMPLETE', color: 'text-faint', dot: 'bg-faint' }
+}
+
+// Rotating status feed for the carousel
+const feeds = [
+  { k: 'ROLE', v: 'FULL-STACK ENGINEER' },
+  { k: 'STACK', v: 'TYPESCRIPT · JAVA · REACT' },
+  { k: 'THEATER', v: SITE.location.toUpperCase() },
+  { k: 'STATUS', v: 'OPEN TO NEW MISSIONS' },
+]
 ---
 
-<Layout canonicalUrl={currentUrl}>
-  <PageHead slot="head" title="Software Engineer" />
-  <section class="flex flex-col gap-y-12 px-4 py-8 sm:px-8 lg:px-16">
-    <div
-      class="flex flex-col items-center text-center sm:flex-row sm:items-start sm:gap-8 sm:text-left"
+<Layout title="Home" bare>
+  <div
+    class="flex min-h-screen flex-col font-display text-body lg:flex-row"
+  >
+    <!-- ===================== LEFT COLUMN ===================== -->
+    <section
+      class="relative flex-1 border-b-2 border-line bg-panel px-6 py-14 sm:px-10 lg:border-b-0 lg:border-r-2"
     >
-      <div class="relative overflow-hidden rounded-lg sm:shrink-0 sm:overflow-hidden sm:rounded-lg">
-        <Profile3D
-          client:load
-          className="h-80"
-        />
-      </div>
-      <div class="mt-8 sm:mt-0 sm:max-w-xl">
-        <h1
-          class="font-custom text-foreground text-start text-4xl font-extrabold sm:text-5xl"
-        >
-          {SITE.title}
-        </h1>
-        <div class="mt-4 flex items-center gap-2" aria-label="location">
-          <span
-            class="bg-primary text-primary-foreground ring-primary/30 rounded-full px-3 py-1 text-sm font-medium ring-1"
-          >
-            I'm from
-          </span>
-          <span class="flex items-center gap-1">
-            <span class="text-foreground whitespace-nowrap text-sm font-medium"> {SITE.location}</span>
-            <span class="shrink-0">
-              <SriLankaSVG client:load className="h-6 w-6 transition-transform duration-500 hover:rotate-12" />
-            </span>
-          </span>
-        </div>
-        <div class="text-md text-foreground mt-4 text-start font-sans space-y-4" title="description" aria-label="description">
-          {SITE.description.split('\n\n').map((paragraph) => (
-            <p>{paragraph}</p>
-          ))}
-        </div>
-      </div>
-    </div>
+      <span class="bracket-tl !top-4 !left-4"></span>
+      <span class="bracket-br !bottom-4 !left-4 !right-auto"></span>
 
-    <section class="relative" aria-labelledby="skills-title">
-      <h2
-        id="skills-title"
-        class="font-custom text-foreground text-2xl font-bold"
-        title="skills"
-        aria-label="skills"
-        role="heading"
-      >
-        Skills & Technologies
-      </h2>
-      <p class="text-muted-foreground text-sm" aria-label="skills description">
-        Here are some of the technologies I've been working with:
-      </p>
-      <div>
-        <Skills client:load />
-      </div>
-    </section>
-
-    <section class="flex flex-col gap-y-4" aria-labelledby="latest-posts-title" role="region">
-      <div class="relative" aria-labelledby="latest-posts-title">
-        <h2
-          id="latest-posts-title"
-          class="font-custom text-foreground text-2xl font-bold"
-          title="latest blog posts"
-          aria-label="latest blog posts"
+      <!-- tab plaque + theme switch -->
+      <div class="mb-9 flex items-center justify-between gap-4">
+      <div class="flex w-fit border-2 border-line" role="tablist">
+        <button
+          type="button"
+          data-tab="about"
+          class="tab-btn cursor-pointer px-6 py-2.5 font-display text-[13px] font-bold tracking-[2px]"
+          aria-selected="true"
         >
-          Latest Blog Posts
-        </h2>
-        <p class="text-muted-foreground text-sm" aria-label="blog description">
-          Here are some of my latest blog posts. You can find more on my blog
-          page.
+          ABOUT
+        </button>
+        <button
+          type="button"
+          data-tab="blog"
+          class="tab-btn cursor-pointer border-l-2 border-line px-6 py-2.5 font-display text-[13px] font-bold tracking-[2px]"
+          aria-selected="false"
+        >
+          BLOG
+        </button>
+      </div>
+        <ThemeToggle />
+      </div>
+
+      <!-- ABOUT panel -->
+      <div data-panel="about">
+        <p class="mb-1.5 font-mono text-[11px] tracking-[2px] text-faint">
+          // PERSONNEL FILE
         </p>
+        <h1
+          class="mb-6 font-display text-[34px] font-bold tracking-wide text-ink"
+        >
+         THARINDU EPASINGHA 
+        </h1>
+
+        <div class="mb-6 flex items-start gap-6">
+          <div
+            class="relative h-[172px] w-[130px] flex-none overflow-hidden border border-line bg-card-alt"
+          >
+            <img
+              src="/images/profile.png"
+              alt="Tharindu Epasingha"
+              width="130"
+              height="172"
+              loading="eager"
+              decoding="async"
+              class="h-full w-full object-cover grayscale-[35%] contrast-[1.05] sepia-[10%]"
+            />
+            <span
+              class="pointer-events-none absolute inset-0 shadow-[inset_0_0_0_1px_#ff6a00]"
+            ></span>
+            <span
+              class="absolute left-1.5 top-1.5 h-2.5 w-2.5 border-l-[1.5px] border-t-[1.5px] border-accent"
+            ></span>
+            <span
+              class="absolute bottom-1.5 right-1.5 h-2.5 w-2.5 border-b-[1.5px] border-r-[1.5px] border-accent"
+            ></span>
+          </div>
+          <div class="pt-1.5">
+            
+            <p
+              class="mt-2 font-mono text-[11.5px] leading-relaxed tracking-wide text-accent"
+            >
+              CALLSIGN: INDIE DEV<br />CLEARANCE: FULL-STACK
+            </p>
+          </div>
+        </div>
+
+        <p class="mb-4 text-base leading-relaxed">
+          Six-year operational record in software engineering. Specializes in
+          clean-code extractions, open-source support drops, and long-range
+          architecture missions.
+        </p>
+        <p class="mb-4 text-base leading-relaxed">
+          Off duty: bonsai maintenance, gym conditioning, and long-range recon
+          on foot through the hills.
+        </p>
+        <p class="mb-7 text-base font-semibold leading-relaxed text-ink">
+          BUILD SOFTWARE. GROW IMPACT. LIVE WITH PURPOSE.
+        </p>
+
+        <!-- status feed carousel -->
+        <div class="relative border border-line bg-card p-6">
+          <span class="bracket-tl !-top-px !-left-px"></span>
+          <span class="bracket-br !-bottom-px !-right-px"></span>
+          <div class="flex items-center gap-4">
+            <button
+              type="button"
+              data-feed="prev"
+              aria-label="Previous"
+              class="flex h-9 w-9 flex-none cursor-pointer items-center justify-center border-2 border-line bg-bg text-base text-accent transition-colors hover:border-accent"
+            >
+              &#9666;
+            </button>
+            <div
+              class="flex h-32 flex-1 flex-col items-center justify-center gap-2.5 border border-line bg-bg text-center"
+            >
+              <div class="font-mono text-[11px] tracking-[2px] text-faint">
+                <span data-feed-key>{feeds[0].k}</span>
+              </div>
+              <div
+                class="px-4 font-mono text-sm tracking-wide text-accent"
+                data-feed-val
+              >
+                {feeds[0].v}
+              </div>
+              <div class="font-mono text-[11px] tracking-[1px] text-faint">
+                FEED <span data-feed-idx>01</span> / 0{feeds.length}
+              </div>
+            </div>
+            <button
+              type="button"
+              data-feed="next"
+              aria-label="Next"
+              class="flex h-9 w-9 flex-none cursor-pointer items-center justify-center border-2 border-line bg-bg text-base text-accent transition-colors hover:border-accent"
+            >
+              &#9656;
+            </button>
+          </div>
+        </div>
       </div>
-      <ul class="flex flex-col gap-y-4">
+
+      <!-- BLOG panel -->
+      <div data-panel="blog" hidden>
+        <p class="mb-1.5 font-mono text-[11px] tracking-[2px] text-faint">
+          // FIELD REPORTS
+        </p>
+        <h1
+          class="mb-4 font-display text-[34px] font-bold tracking-wide text-ink"
+        >
+          BLOG
+        </h1>
+        <p class="mb-2 text-base leading-relaxed">
+          Dispatches from the field — short reports on building things that hold
+          up under fire.
+        </p>
+        <p class="mb-7 font-mono text-xs tracking-wide text-faint">
+          LATEST TRANSMISSIONS
+        </p>
+
         {
-          blog.map((post) => (
-            <li>
-              <BlogCard entry={post} />
-            </li>
+          recentPosts.map((post) => (
+            <a
+              href={`/blog/${post.id}`}
+              class="group mb-6 block border-b border-line pb-5"
+            >
+              <div class="font-display text-lg font-bold tracking-wide text-ink transition-colors group-hover:text-accent">
+                {post.data.title}
+              </div>
+              <div class="mt-2 text-[14.5px] leading-relaxed text-muted">
+                {post.data.description}
+              </div>
+            </a>
           ))
         }
-      </ul>
-      <div class="flex justify-center" aria-label="see all posts">
-        <Link
+
+        <a
           href="/blog"
-          class={buttonVariants({ variant: 'ghost' }) + ' group'}
+          class="inline-flex items-center gap-2 font-display text-[13px] font-bold tracking-widest text-accent"
         >
-          See all posts <span
-            class="ml-1.5 transition-transform group-hover:translate-x-1"
-            >&rarr;</span
-          >
-        </Link>
+          &#9656; VIEW ALL TRANSMISSIONS
+        </a>
       </div>
     </section>
-  </section>
+
+    <!-- ===================== RIGHT COLUMN ===================== -->
+    <section
+      class="relative bg-panel-alt px-6 py-14 sm:px-10 lg:flex-[1.05]"
+    >
+      <span class="bracket-tl !top-4 !right-4 !left-auto !border-l-0 !border-r-2"
+      ></span>
+      <span class="bracket-br !bottom-4 !right-4"></span>
+
+      <p class="mb-1.5 font-mono text-[11px] tracking-[2px] text-faint">
+        // OPERATIONS LOG
+      </p>
+      <h1 class="mb-4 font-display text-[34px] font-bold tracking-wide text-ink">
+        PROJECTS
+      </h1>
+      <p class="mb-8 max-w-lg text-base leading-relaxed">
+        Recent and highest-impact missions undertaken as a solo operator.
+      </p>
+
+      {
+        projects.map((proj) => {
+          const status = projectStatus(proj.data.endDate)
+          return (
+            <div class="relative mb-6 border border-l-[3px] border-line border-l-accent bg-card px-6 py-6 transition-shadow hover:shadow-[0_4px_14px_rgba(0,0,0,0.35)]">
+              <div class="mb-2.5 flex items-center gap-2.5">
+                <span class={`h-2 w-2 rounded-full ${status.dot} shadow-[0_0_6px_currentColor] ${status.color}`} />
+                <span class={`font-mono text-[10px] tracking-[1.5px] ${status.color}`}>
+                  {status.label}
+                </span>
+              </div>
+              <div class="mb-2.5 font-display text-xl font-bold tracking-wide text-ink">
+                {proj.data.name}
+              </div>
+              <div class="mb-4 text-[14.5px] leading-relaxed text-muted">
+                {proj.data.description}
+              </div>
+              <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+                <a
+                  href={`/projects/${proj.id}`}
+                  class="flex flex-none items-center gap-1.5 whitespace-nowrap font-display text-[13px] font-bold tracking-wide text-accent"
+                >
+                  &#9656; VIEW PROJECT
+                </a>
+                {proj.data.link && (
+                  <a
+                    href={proj.data.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="flex flex-none items-center gap-1.5 whitespace-nowrap font-display text-[13px] font-bold tracking-wide text-accent"
+                  >
+                    &#9656; SOURCE
+                  </a>
+                )}
+              </div>
+            </div>
+          )
+        })
+      }
+
+      <a
+        href="/projects"
+        class="mt-2 inline-flex items-center gap-2 font-display text-[13px] font-bold tracking-widest text-accent"
+      >
+        &#9656; VIEW FULL OPERATIONS LOG
+      </a>
+    </section>
+  </div>
 </Layout>
+
+<script is:inline define:vars={{ feeds }}>
+  // --- tab switching (ABOUT / BLOG) ---
+  const tabBtns = document.querySelectorAll('[data-tab]')
+  const panels = document.querySelectorAll('[data-panel]')
+  const active = 'bg-accent text-bg'
+  const inactive = 'bg-card text-faint'
+
+  function setTab(name) {
+    tabBtns.forEach((btn) => {
+      const on = btn.dataset.tab === name
+      btn.setAttribute('aria-selected', on ? 'true' : 'false')
+      btn.classList.remove('bg-accent', 'text-bg', 'bg-card', 'text-faint')
+      btn.classList.add(...(on ? active : inactive).split(' '))
+    })
+    panels.forEach((p) => {
+      p.hidden = p.dataset.panel !== name
+    })
+  }
+  tabBtns.forEach((btn) => btn.addEventListener('click', () => setTab(btn.dataset.tab)))
+  setTab('about')
+
+  // --- status feed carousel ---
+  let i = 0
+  const keyEl = document.querySelector('[data-feed-key]')
+  const valEl = document.querySelector('[data-feed-val]')
+  const idxEl = document.querySelector('[data-feed-idx]')
+  function renderFeed() {
+    keyEl.textContent = feeds[i].k
+    valEl.textContent = feeds[i].v
+    idxEl.textContent = String(i + 1).padStart(2, '0')
+  }
+  document
+    .querySelector('[data-feed="prev"]')
+    ?.addEventListener('click', () => {
+      i = (i - 1 + feeds.length) % feeds.length
+      renderFeed()
+    })
+  document
+    .querySelector('[data-feed="next"]')
+    ?.addEventListener('click', () => {
+      i = (i + 1) % feeds.length
+      renderFeed()
+    })
+</script>

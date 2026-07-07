@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:#1c1f1a;}
+  a{color:#ff6a00;text-decoration:none}
+  a:hover{color:#ffb266;text-decoration:underline}
+  ::selection{background:#ff6a00;color:#1c1f1a}
+</style>
+</helmet>
+
+<div style="display:flex;min-height:100vh;background:#1c1f1a;font-family:'Rajdhani',sans-serif;color:#d9dcd2;">
+
+  <!-- LEFT COLUMN -->
+  <div style="flex:1;min-width:0;background:#20241d;padding:56px 48px 80px;border-right:2px solid #3a4033;position:relative;">
+    <div style="position:absolute;top:16px;left:16px;width:16px;height:16px;border-top:2px solid #ff6a00;border-left:2px solid #ff6a00;"></div>
+    <div style="position:absolute;bottom:16px;left:16px;width:16px;height:16px;border-bottom:2px solid #ff6a00;border-left:2px solid #ff6a00;"></div>
+
+    <!-- tab plaque -->
+    <div style="display:flex;gap:0;margin-bottom:34px;border:2px solid #3a4033;width:fit-content;">
+      <div onClick="{{ setTab_about }}" style="cursor:pointer;padding:9px 22px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;{{ aboutTabStyle }}">ABOUT</div>
+      <div onClick="{{ setTab_blog }}" style="cursor:pointer;padding:9px 22px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;border-left:2px solid #3a4033;{{ blogTabStyle }}">BLOG</div>
+    </div>
+
+    <sc-if value="{{ isAbout }}" hint-placeholder-val="{{ true }}">
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:2px;color:#7a8270;margin-bottom:6px;">// PERSONNEL FILE</div>
+        <h1 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:34px;margin:0 0 26px;color:#eef0ea;letter-spacing:1px;">ABOUT</h1>
+
+        <div style="display:flex;gap:22px;align-items:flex-start;margin-bottom:26px;">
+          <div style="width:130px;height:172px;flex:none;background:#2a2f24;border:1px solid #3a4033;box-shadow:inset 0 0 0 1px #ff6a00;display:flex;align-items:center;justify-content:center;position:relative;">
+            <div style="position:absolute;top:6px;left:6px;width:10px;height:10px;border-top:1.5px solid #ff6a00;border-left:1.5px solid #ff6a00;"></div>
+            <div style="position:absolute;bottom:6px;right:6px;width:10px;height:10px;border-bottom:1.5px solid #ff6a00;border-right:1.5px solid #ff6a00;"></div>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7a8270;letter-spacing:1px;">PHOTO ID</span>
+          </div>
+          <div style="padding-top:6px;">
+            <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;color:#eef0ea;letter-spacing:1px;">EPASINGHA, T.</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#ff6a00;letter-spacing:1px;margin-top:8px;line-height:1.6;">CALLSIGN: INDIE DEV<br>CLEARANCE: FULL-STACK</div>
+          </div>
+        </div>
+
+        <p style="font-size:16px;line-height:1.7;margin:0 0 18px;">Six-year operational record in software engineering. Specializes in clean-code extractions, open-source support drops, and long-range architecture missions.</p>
+        <p style="font-size:16px;line-height:1.7;margin:0 0 18px;">Off duty: bonsai maintenance, gym conditioning, long-range recon on foot through the hills.</p>
+        <p style="font-size:16px;line-height:1.7;margin:0 0 30px;font-weight:600;color:#eef0ea;">BUILD SOFTWARE. GROW IMPACT. LIVE WITH PURPOSE.</p>
+
+        <!-- carousel -->
+        <div style="background:#242920;border:1px solid #3a4033;padding:26px;position:relative;">
+          <div style="position:absolute;top:-1px;left:-1px;width:14px;height:14px;border-top:2px solid #ff6a00;border-left:2px solid #ff6a00;"></div>
+          <div style="position:absolute;bottom:-1px;right:-1px;width:14px;height:14px;border-bottom:2px solid #ff6a00;border-right:2px solid #ff6a00;"></div>
+          <div style="display:flex;align-items:center;gap:18px;">
+            <div onClick="{{ prevSlide }}" style="cursor:pointer;flex:none;width:34px;height:34px;border:2px solid #3a4033;background:#1c1f1a;display:flex;align-items:center;justify-content:center;font-size:16px;color:#ff6a00;" style-hover="border-color:#ff6a00;">&#9666;</div>
+            <div style="flex:1;height:220px;background:#1c1f1a;border:1px solid #3a4033;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#7a8270;letter-spacing:2px;">SIGNAL LOST</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1px;color:#ff6a00;">FEED {{ slideLabel }} / 04</div>
+            </div>
+            <div onClick="{{ nextSlide }}" style="cursor:pointer;flex:none;width:34px;height:34px;border:2px solid #3a4033;background:#1c1f1a;display:flex;align-items:center;justify-content:center;font-size:16px;color:#ff6a00;" style-hover="border-color:#ff6a00;">&#9656;</div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isBlog }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:2px;color:#7a8270;margin-bottom:6px;">// FIELD REPORTS</div>
+        <h1 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:34px;margin:0 0 16px;color:#eef0ea;letter-spacing:1px;">BLOG</h1>
+        <p style="font-size:16px;line-height:1.7;margin:0 0 8px;">Dispatches from the field &mdash; short reports on building things that hold up under fire.</p>
+        <p style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#7a8270;letter-spacing:1px;margin:0 0 30px;">LATEST TRANSMISSIONS</p>
+
+        <sc-for list="{{ posts }}" as="post" hint-placeholder-count="3">
+          <div style="margin-bottom:26px;padding-bottom:22px;border-bottom:1px solid #3a4033;">
+            <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:#eef0ea;margin-bottom:8px;letter-spacing:.5px;">{{ post.title }}</div>
+            <div style="font-size:14.5px;line-height:1.65;color:#b8bcae;">{{ post.body }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div style="flex:1.05;min-width:0;background:#1a1d18;padding:56px 48px 80px;position:relative;">
+    <div style="position:absolute;top:16px;right:16px;width:16px;height:16px;border-top:2px solid #ff6a00;border-right:2px solid #ff6a00;"></div>
+    <div style="position:absolute;bottom:16px;right:16px;width:16px;height:16px;border-bottom:2px solid #ff6a00;border-right:2px solid #ff6a00;"></div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:2px;color:#7a8270;margin-bottom:6px;">// OPERATIONS LOG</div>
+    <h1 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:34px;margin:0 0 16px;color:#eef0ea;letter-spacing:1px;">PROJECTS</h1>
+    <p style="font-size:16px;line-height:1.7;margin:0 0 32px;max-width:520px;">Recent and highest-impact missions undertaken as a solo operator.</p>
+
+    <sc-for list="{{ projects }}" as="proj" hint-placeholder-count="4">
+      <div style="background:#242920;border:1px solid #3a4033;padding:24px 26px;margin-bottom:22px;position:relative;border-left:3px solid #ff6a00;" style-hover="border-color:#3a4033;border-left-color:#ff6a00;box-shadow:0 4px 14px rgba(0,0,0,.35);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:#9ecb6a;box-shadow:0 0 6px #9ecb6a;"></div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.5px;color:#9ecb6a;">ACTIVE</div>
+        </div>
+        <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;color:#eef0ea;margin-bottom:10px;letter-spacing:.5px;">{{ proj.title }}</div>
+        <div style="font-size:14.5px;line-height:1.65;color:#b8bcae;margin-bottom:16px;">{{ proj.body }}</div>
+        <div style="display:flex;gap:22px;align-items:center;">
+          <a href="#" style="font-size:13px;font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:1px;color:#ff6a00;display:flex;align-items:center;gap:6px;white-space:nowrap;flex:none;">&#9656; VIEW PROJECT</a>
+          <a href="#" style="font-size:13px;font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:1px;color:#ff6a00;display:flex;align-items:center;gap:6px;white-space:nowrap;flex:none;">&#9656; SOURCE</a>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    tab: 'about',
+    slide: 0,
+  };
+
+  projects = [
+    { title: 'THE LEDGER ENGINE', body: 'A double-entry finance tracker built for indie shopkeepers. Forged in TypeScript, sealed with tests, deployed without retreat.' },
+    { title: "CARTOGRAPHER'S ATLAS", body: 'A data-visualization toolkit for mapping the unknown. Turns raw numbers into terrain worth exploring.' },
+    { title: 'WAYFINDER CLI', body: 'A command-line companion for long journeys through messy codebases. Small, sharp, and always in your pocket.' },
+    { title: 'THE ALMANAC', body: 'A lightweight publishing engine for notes, essays, and field reports. Built to outlast trends.' },
+  ];
+
+  posts = [
+    { title: 'ON SLOW CODE', body: 'Why the best software, like the best gear, is built to be repaired rather than replaced.' },
+    { title: 'THE OPEN-SOURCE SUPPLY LINE', body: 'Notes on what field logistics can teach us about maintaining shared tools.' },
+    { title: 'CLEARING THE MIND BEFORE THE MACHINE', body: 'A short report on bonsai, long marches, and why stepping away from the terminal makes the code better.' },
+  ];
+
+  renderVals() {
+    const isAbout = this.state.tab === 'about';
+    const tabActive = 'background:#ff6a00;color:#1c1f1a;';
+    const tabInactive = 'background:#242920;color:#7a8270;';
+    return {
+      isAbout,
+      isBlog: !isAbout,
+      aboutTabStyle: isAbout ? tabActive : tabInactive,
+      blogTabStyle: !isAbout ? tabActive : tabInactive,
+      setTab_about: () => this.setState({ tab: 'about' }),
+      setTab_blog: () => this.setState({ tab: 'blog' }),
+      slideLabel: String(this.state.slide + 1).padStart(2, '0'),
+      prevSlide: () => this.setState(s => ({ slide: (s.slide + 3) % 4 })),
+      nextSlide: () => this.setState(s => ({ slide: (s.slide + 1) % 4 })),
+      projects: this.projects,
+      posts: this.posts,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import { getAllProjects } from '@/lib/data-utils'
+
+const projects = await getAllProjects()
+const now = new Date()
+function status(endDate?: Date) {
+  if (!endDate || endDate > now)
+    return { label: 'ACTIVE', cls: 'text-active' }
+  return { label: 'COMPLETE', cls: 'text-faint' }
+}
+---
+
+<Layout
+  title="Projects"
+  description="Recent and highest-impact missions undertaken as a solo operator."
+>
+  <p class="mb-1.5 font-mono text-[11px] tracking-[2px] text-faint">
+    // OPERATIONS LOG
+  </p>
+  <h1 class="mb-3 font-display text-4xl font-bold tracking-wide text-ink">
+    PROJECTS
+  </h1>
+  <p class="mb-10 max-w-2xl text-base leading-relaxed text-muted">
+    Recent and highest-impact missions undertaken as a solo operator.
+  </p>
+
+  <div class="grid gap-6 sm:grid-cols-2">
+    {
+      projects.map((proj) => {
+        const s = status(proj.data.endDate)
+        return (
+          <div class="relative flex flex-col border border-l-[3px] border-line border-l-accent bg-card px-6 py-6 transition-shadow hover:shadow-[0_4px_14px_rgba(0,0,0,0.35)]">
+            <div class="mb-2.5 flex items-center gap-2.5">
+              <span class={`h-2 w-2 rounded-full bg-current shadow-[0_0_6px_currentColor] ${s.cls}`} />
+              <span class={`font-mono text-[10px] tracking-[1.5px] ${s.cls}`}>
+                {s.label}
+              </span>
+            </div>
+            <h2 class="mb-2.5 font-display text-xl font-bold tracking-wide text-ink">
+              {proj.data.name}
+            </h2>
+            <p class="mb-4 flex-1 text-[14.5px] leading-relaxed text-muted">
+              {proj.data.description}
+            </p>
+            {proj.data.tags && (
+              <div class="mb-4 flex flex-wrap gap-1.5">
+                {proj.data.tags.slice(0, 6).map((tag) => (
+                  <span class="border border-line px-2 py-0.5 font-mono text-[10px] tracking-wide text-faint">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+            <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+              <a
+                href={`/projects/${proj.id}`}
+                class="flex items-center gap-1.5 font-display text-[13px] font-bold tracking-wide text-accent"
+              >
+                &#9656; VIEW PROJECT
+              </a>
+              {proj.data.link && (
+                <a
+                  href={proj.data.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex items-center gap-1.5 font-display text-[13px] font-bold tracking-wide text-accent"
+                >
+                  &#9656; SOURCE
+                </a>
+              )}
+            </div>
+          </div>
+        )
+      })
+    }
+  </div>
+</Layout>

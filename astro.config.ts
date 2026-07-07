@@ -3,101 +3,53 @@ import { defineConfig } from 'astro/config'
 import mdx from '@astrojs/mdx'
 import react from '@astrojs/react'
 import icon from 'astro-icon'
-
 import expressiveCode from 'astro-expressive-code'
-import { rehypeHeadingIds } from '@astrojs/markdown-remark'
+
+import { unified, rehypeHeadingIds } from '@astrojs/markdown-remark'
 import rehypeExternalLinks from 'rehype-external-links'
-import rehypePrettyCode from 'rehype-pretty-code'
 import remarkEmoji from 'remark-emoji'
-import remarkMath from 'remark-math'
-import remarkSectionize from 'remark-sectionize'
-import rehypeDocument from 'rehype-document'
 
 import { pluginCollapsibleSections } from '@expressive-code/plugin-collapsible-sections'
 import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers'
 
-import tailwindcss from "@tailwindcss/vite";
-import keystatic from '@keystatic/astro';
-import cloudflare from '@astrojs/cloudflare';
+import tailwindcss from '@tailwindcss/vite'
 
-function rehypeDemoteH1AndStripTitle() {
-  return (tree: any) => {
-    const walk = (node: any, parent: any | null, indexInParent: number | null) => {
-      if (!node) return
-      const isElement = node.type === 'element'
-      if (isElement) {
-        if (node.tagName === 'title') {
-          if (parent && Array.isArray(parent.children) && indexInParent !== null && indexInParent > -1) {
-            parent.children.splice(indexInParent, 1)
-            return
-          }
-        }
-        if (node.tagName === 'h1') {
-          node.tagName = 'h2'
-        }
-      }
-      if (Array.isArray(node.children)) {
-        for (let i = node.children.length - 1; i >= 0; i--) {
-          walk(node.children[i], node, i)
-        }
-      }
-    }
-    walk(tree, null, null)
-  }
-}
-
+// https://astro.build/config
 export default defineConfig({
   site: 'https://www.epasingha.me',
+  output: 'static',
 
-  integrations: [expressiveCode({
-    themes: ['catppuccin-latte', 'ayu-dark'],
-    plugins: [pluginCollapsibleSections(), pluginLineNumbers()],
-    useDarkModeMediaQuery: true,
-    defaultProps: {
-      wrap: true,
-      collapseStyle: 'collapsible-auto',
-      overridesByLang: {
-        'ansi,bat,bash,batch,cmd,console,powershell,ps,ps1,psd1,psm1,sh,shell,shellscript,shellsession,text,zsh':
-          {
-            showLineNumbers: true,
-          },
+  integrations: [
+    expressiveCode({
+      themes: ['catppuccin-latte', 'ayu-dark'],
+      plugins: [pluginCollapsibleSections(), pluginLineNumbers()],
+      useDarkModeMediaQuery: false,
+      themeCssSelector: (theme) =>
+        theme.name === 'ayu-dark'
+          ? '[data-theme="dark"]'
+          : '[data-theme="light"]',
+      defaultProps: {
+        wrap: true,
+        collapseStyle: 'collapsible-auto',
+        showLineNumbers: false,
       },
-    },
-  }), mdx(), react(), icon(), keystatic()],
+      styleOverrides: {
+        borderRadius: '0px',
+        borderColor: '#3a4033',
+        codeFontFamily: "'IBM Plex Mono', monospace",
+      },
+    }),
+    mdx(),
+    react(),
+    icon(),
+  ],
+
   vite: {
-    plugins: [tailwindcss() as any],
-    resolve: {
-      dedupe: ['react', 'react-dom'],
-    },
-    optimizeDeps: {
-      exclude: ["satori", "satori-html", "@resvg/resvg-wasm"],
-      include: [
-        "react",
-        "react-dom",
-        "clsx",
-        "framer-motion",
-        "lucide-react",
-        "lodash.debounce",
-        "@radix-ui/react-icons",
-        "@radix-ui/react-avatar",
-        "@radix-ui/react-dropdown-menu",
-        "@radix-ui/react-scroll-area",
-        "@radix-ui/react-separator",
-        "@radix-ui/react-slot"
-      ]
-    },
-    build: {
-      rollupOptions: {
-        external: (id) => {
-          // Exclude Wasm files from bundling
-          return id.includes('.wasm') || id.includes('@resvg/resvg-wasm/index_bg')
-        },
-      },
-    },
+    plugins: [tailwindcss()],
   },
 
   server: {
-    port: 3000,
+    port: 3010,
     host: true,
   },
 
@@ -106,30 +58,18 @@ export default defineConfig({
   },
 
   markdown: {
-    syntaxHighlight: false,
-    rehypePlugins: [
-      rehypeDocument,
-      [
-        rehypeExternalLinks,
-        {
-          target: '_blank',
-          ariaLabel: 'External link'
-        },
-      ],
-      rehypeDemoteH1AndStripTitle,
-      rehypeHeadingIds,
-      [
-        rehypePrettyCode,
-        {
-          theme: {
-            light: 'catppuccin-latte',
-            dark: 'ayu-dark',
+    processor: unified({
+      remarkPlugins: [remarkEmoji],
+      rehypePlugins: [
+        [
+          rehypeExternalLinks,
+          {
+            target: '_blank',
+            rel: ['nofollow', 'noopener', 'noreferrer'],
           },
-        },
+        ],
+        rehypeHeadingIds,
       ],
-    ],
-    remarkPlugins: [remarkMath, remarkEmoji, remarkSectionize],
+    }),
   },
-  output:"server",
-  adapter: cloudflare() 
 })

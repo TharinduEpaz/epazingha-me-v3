@@ -1,0 +1,65 @@
+---
+import { SITE } from '@/consts'
+import ThemeToggle from '@/components/ThemeToggle.astro'
+
+const path = Astro.url.pathname
+const links = [
+  { href: '/', label: 'HOME' },
+  { href: '/blog', label: 'BLOG' },
+  { href: '/projects', label: 'PROJECTS' },
+  { href: '/tags', label: 'TAGS' },
+]
+
+function isActive(href: string) {
+  if (href === '/') return path === '/'
+  return path === href || path.startsWith(href + '/')
+}
+---
+
+<header
+  class="sticky top-0 z-50 border-b-2 border-line bg-panel-alt/95 backdrop-blur supports-[backdrop-filter]:bg-panel-alt/80"
+>
+  <div
+    class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:px-6"
+  >
+    <a href="/" class="group flex items-center gap-3">
+      <span
+        class="flex h-8 w-8 items-center justify-center border-2 border-line text-accent transition-colors group-hover:border-accent"
+      >
+        <span class="font-mono text-sm font-bold">T</span>
+      </span>
+      <span class="hidden sm:block">
+        <span
+          class="block font-display text-sm font-bold tracking-widest text-ink"
+          >EPASINGHA, T.</span
+        >
+        <span class="block font-mono text-[10px] tracking-widest text-faint"
+          >CALLSIGN: INDIE DEV</span
+        >
+      </span>
+    </a>
+
+    <div class="flex items-center gap-3">
+      <nav class="flex items-center border-2 border-line">
+        {
+          links.map((link, i) => (
+            <a
+              href={link.href}
+              class:list={[
+                'px-3 py-2 font-display text-[11px] font-bold tracking-widest transition-colors sm:px-4 sm:text-xs',
+                i > 0 && 'border-l-2 border-line',
+                isActive(link.href)
+                  ? 'bg-accent text-bg'
+                  : 'bg-card text-faint hover:text-ink',
+              ]}
+            >
+              {link.label}
+            </a>
+          ))
+        }
+      </nav>
+      <ThemeToggle />
+    </div>
+  </div>
+</header>
+<span class="sr-only">{SITE.title}</span>
