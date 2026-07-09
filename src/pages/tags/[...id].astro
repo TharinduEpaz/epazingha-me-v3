@@ -35,12 +35,16 @@ const posts = await getPostsByTag(tag)
 
   <ul class="flex flex-col gap-4">
     {
-      posts.map((post) => (
+      posts.map((post, i) => (
         <li>
           <a
             href={`/blog/${post.id}`}
-            class="group block border border-l-[3px] border-line border-l-accent bg-card px-5 py-5 transition-shadow hover:shadow-[0_4px_14px_rgba(0,0,0,0.35)]"
+            data-reveal
+            style={`--reveal-delay:${i * 70}ms`}
+            class="ops-card group block border border-l-[3px] border-line border-l-accent bg-card px-5 py-5"
           >
+            <span class="ops-corner ops-corner-tl" />
+            <span class="ops-corner ops-corner-br" />
             <div class="mb-1.5 font-mono text-[11px] tracking-widest text-faint">
               {formatDate(post.data.date).toUpperCase()}
             </div>

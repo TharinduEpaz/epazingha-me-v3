@@ -63,7 +63,7 @@ const mins = readingTime(post.body ?? '')
 
     {
       post.data.image && (
-        <div class="relative mb-10 border border-line">
+        <div class="relative mb-10 border border-line" data-reveal>
           <span class="bracket-tl" />
           <span class="bracket-br" />
           <Image
@@ -91,7 +91,7 @@ const mins = readingTime(post.body ?? '')
         prev ? (
           <a
             href={`/blog/${prev.id}`}
-            class="group border border-line bg-card px-5 py-4 transition-colors hover:border-accent"
+            class="ops-card group border border-line bg-card px-5 py-4"
           >
             <span class="font-mono text-[10px] tracking-widest text-faint">
               &#9666; PREVIOUS
@@ -108,7 +108,7 @@ const mins = readingTime(post.body ?? '')
         next && (
           <a
             href={`/blog/${next.id}`}
-            class="group border border-line bg-card px-5 py-4 text-right transition-colors hover:border-accent sm:col-start-2"
+            class="ops-card group border border-line bg-card px-5 py-4 text-right sm:col-start-2"
           >
             <span class="font-mono text-[10px] tracking-widest text-faint">
               NEXT &#9656;

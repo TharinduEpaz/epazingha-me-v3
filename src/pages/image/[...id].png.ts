@@ -27,14 +27,14 @@ const RajRegular = fs.readFileSync(
 const dimensions = { width: 1200, height: 630 }
 
 const C = {
-  bg: '#1c1f1a',
-  panel: '#20241d',
-  card: '#242920',
-  line: '#3a4033',
-  accent: '#ff6a00',
-  ink: '#eef0ea',
-  body: '#d9dcd2',
-  faint: '#7a8270',
+  bg: '#0d0f0d',
+  panel: '#161a15',
+  card: '#1d211c',
+  line: '#373d36',
+  accent: '#b4ff29',
+  ink: '#f1f4ee',
+  body: '#c6ccc0',
+  faint: '#6a7065',
 }
 
 interface Props {

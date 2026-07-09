@@ -2,10 +2,17 @@
 import Layout from '@/layouts/Layout.astro'
 import ThemeToggle from '@/components/ThemeToggle.astro'
 import { getRecentPosts, getAllProjects } from '@/lib/data-utils'
+import { getInstagramPosts } from '@/lib/instagram'
 import { SITE } from '@/consts'
 
 const recentPosts = await getRecentPosts(4)
 const projects = await getAllProjects()
+
+// Live Instagram feed (build-time). Empty when no token / on error → the
+// carousel falls back to the static status-feed below.
+const igPosts = await getInstagramPosts(6)
+const useIg = igPosts.length > 0
+const igProfile = 'https://www.instagram.com/epazingha'
 
 const now = new Date()
 function projectStatus(endDate?: Date) {
@@ -68,7 +75,7 @@ const feeds = [
          THARINDU EPASINGHA 
         </h1>
 
-        <div class="mb-6 flex items-start gap-6">
+        <div class="mb-6 flex items-start gap-6" data-reveal>
           <div
             class="relative h-[172px] w-[130px] flex-none overflow-hidden border border-line bg-card-alt"
           >
@@ -82,7 +89,7 @@ const feeds = [
               class="h-full w-full object-cover grayscale-[35%] contrast-[1.05] sepia-[10%]"
             />
             <span
-              class="pointer-events-none absolute inset-0 shadow-[inset_0_0_0_1px_#ff6a00]"
+              class="pointer-events-none absolute inset-0 shadow-[inset_0_0_0_1px_var(--color-accent)]"
             ></span>
             <span
               class="absolute left-1.5 top-1.5 h-2.5 w-2.5 border-l-[1.5px] border-t-[1.5px] border-accent"
@@ -114,44 +121,123 @@ const feeds = [
           BUILD SOFTWARE. GROW IMPACT. LIVE WITH PURPOSE.
         </p>
 
-        <!-- status feed carousel -->
-        <div class="relative border border-line bg-card p-6">
+        <!-- carousel: live Instagram feed, or static status-feed fallback -->
+        <div
+          class="relative border border-line bg-card p-6"
+          data-reveal
+          style="--reveal-delay:120ms"
+        >
           <span class="bracket-tl !-top-px !-left-px"></span>
           <span class="bracket-br !-bottom-px !-right-px"></span>
-          <div class="flex items-center gap-4">
-            <button
-              type="button"
-              data-feed="prev"
-              aria-label="Previous"
-              class="flex h-9 w-9 flex-none cursor-pointer items-center justify-center border-2 border-line bg-bg text-base text-accent transition-colors hover:border-accent"
-            >
-              &#9666;
-            </button>
-            <div
-              class="flex h-32 flex-1 flex-col items-center justify-center gap-2.5 border border-line bg-bg text-center"
-            >
-              <div class="font-mono text-[11px] tracking-[2px] text-faint">
-                <span data-feed-key>{feeds[0].k}</span>
+
+          {
+            useIg ? (
+              <div data-ig>
+                <div class="mb-3 flex items-center justify-between">
+                  <span class="flex items-center gap-2 font-mono text-[11px] tracking-[2px] text-active">
+                    <span class="h-2 w-2 rounded-full bg-active shadow-[0_0_6px_currentColor]" />
+                    LIVE FEED
+                  </span>
+                  <a
+                    href={igProfile}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="font-mono text-[10px] tracking-widest text-faint hover:text-accent"
+                  >
+                    @epazingha
+                  </a>
+                </div>
+
+                <div class="flex items-center gap-4">
+                  <button
+                    type="button"
+                    data-ig-prev
+                    aria-label="Previous post"
+                    class="flex h-9 w-9 flex-none cursor-pointer items-center justify-center border-2 border-line bg-bg text-base text-accent transition-colors hover:border-accent"
+                  >
+                    &#9666;
+                  </button>
+
+                  <div class="relative h-56 flex-1 overflow-hidden border border-line bg-bg">
+                    {igPosts.map((p, i) => (
+                      <a
+                        href={p.permalink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="ig-slide absolute inset-0 block"
+                        data-i={i}
+                        data-caption={p.caption}
+                        hidden={i !== 0}
+                      >
+                        <img
+                          src={p.image}
+                          alt={p.caption || 'Instagram post'}
+                          loading="lazy"
+                          class="h-full w-full object-cover"
+                        />
+                        <span class="pointer-events-none absolute inset-0 shadow-[inset_0_0_0_1px_var(--color-accent)]" />
+                      </a>
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    data-ig-next
+                    aria-label="Next post"
+                    class="flex h-9 w-9 flex-none cursor-pointer items-center justify-center border-2 border-line bg-bg text-base text-accent transition-colors hover:border-accent"
+                  >
+                    &#9656;
+                  </button>
+                </div>
+
+                <div class="mt-3 flex items-center justify-between gap-3">
+                  <p
+                    class="line-clamp-1 flex-1 font-mono text-[11px] leading-relaxed text-muted"
+                    data-ig-caption
+                  >
+                    {igPosts[0].caption}
+                  </p>
+                  <span class="flex-none font-mono text-[11px] tracking-[1px] text-faint">
+                    POST <span data-ig-idx>01</span> /{' '}
+                    {String(igPosts.length).padStart(2, '0')}
+                  </span>
+                </div>
               </div>
-              <div
-                class="px-4 font-mono text-sm tracking-wide text-accent"
-                data-feed-val
-              >
-                {feeds[0].v}
+            ) : (
+              <div class="flex items-center gap-4">
+                <button
+                  type="button"
+                  data-feed="prev"
+                  aria-label="Previous"
+                  class="flex h-9 w-9 flex-none cursor-pointer items-center justify-center border-2 border-line bg-bg text-base text-accent transition-colors hover:border-accent"
+                >
+                  &#9666;
+                </button>
+                <div class="flex h-32 flex-1 flex-col items-center justify-center gap-2.5 border border-line bg-bg text-center">
+                  <div class="font-mono text-[11px] tracking-[2px] text-faint">
+                    <span data-feed-key>{feeds[0].k}</span>
+                  </div>
+                  <div
+                    class="px-4 font-mono text-sm tracking-wide text-accent"
+                    data-feed-val
+                  >
+                    {feeds[0].v}
+                  </div>
+                  <div class="font-mono text-[11px] tracking-[1px] text-faint">
+                    FEED <span data-feed-idx>01</span> / 0{feeds.length}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  data-feed="next"
+                  aria-label="Next"
+                  class="flex h-9 w-9 flex-none cursor-pointer items-center justify-center border-2 border-line bg-bg text-base text-accent transition-colors hover:border-accent"
+                >
+                  &#9656;
+                </button>
               </div>
-              <div class="font-mono text-[11px] tracking-[1px] text-faint">
-                FEED <span data-feed-idx>01</span> / 0{feeds.length}
-              </div>
-            </div>
-            <button
-              type="button"
-              data-feed="next"
-              aria-label="Next"
-              class="flex h-9 w-9 flex-none cursor-pointer items-center justify-center border-2 border-line bg-bg text-base text-accent transition-colors hover:border-accent"
-            >
-              &#9656;
-            </button>
-          </div>
+            )
+          }
         </div>
       </div>
 
@@ -174,10 +260,12 @@ const feeds = [
         </p>
 
         {
-          recentPosts.map((post) => (
+          recentPosts.map((post, i) => (
             <a
               href={`/blog/${post.id}`}
-              class="group mb-6 block border-b border-line pb-5"
+              data-reveal
+              style={`--reveal-delay:${i * 70}ms`}
+              class="ops-row group mb-6 block border-b border-line pb-5"
             >
               <div class="font-display text-lg font-bold tracking-wide text-ink transition-colors group-hover:text-accent">
                 {post.data.title}
@@ -217,10 +305,16 @@ const feeds = [
       </p>
 
       {
-        projects.map((proj) => {
+        projects.map((proj, i) => {
           const status = projectStatus(proj.data.endDate)
           return (
-            <div class="relative mb-6 border border-l-[3px] border-line border-l-accent bg-card px-6 py-6 transition-shadow hover:shadow-[0_4px_14px_rgba(0,0,0,0.35)]">
+            <div
+              data-reveal
+              style={`--reveal-delay:${i * 80}ms`}
+              class="ops-card relative mb-6 border border-l-[3px] border-line border-l-accent bg-card px-6 py-6"
+            >
+              <span class="ops-corner ops-corner-tl" />
+              <span class="ops-corner ops-corner-br" />
               <div class="mb-2.5 flex items-center gap-2.5">
                 <span class={`h-2 w-2 rounded-full ${status.dot} shadow-[0_0_6px_currentColor] ${status.color}`} />
                 <span class={`font-mono text-[10px] tracking-[1.5px] ${status.color}`}>
@@ -287,26 +381,55 @@ const feeds = [
   tabBtns.forEach((btn) => btn.addEventListener('click', () => setTab(btn.dataset.tab)))
   setTab('about')
 
-  // --- status feed carousel ---
-  let i = 0
-  const keyEl = document.querySelector('[data-feed-key]')
-  const valEl = document.querySelector('[data-feed-val]')
-  const idxEl = document.querySelector('[data-feed-idx]')
-  function renderFeed() {
-    keyEl.textContent = feeds[i].k
-    valEl.textContent = feeds[i].v
-    idxEl.textContent = String(i + 1).padStart(2, '0')
+  // --- Instagram image carousel (when a live feed is present) ---
+  const igRoot = document.querySelector('[data-ig]')
+  if (igRoot) {
+    const slides = Array.from(igRoot.querySelectorAll('.ig-slide'))
+    const idxEl = igRoot.querySelector('[data-ig-idx]')
+    const capEl = igRoot.querySelector('[data-ig-caption]')
+    let g = 0
+    function renderIg() {
+      slides.forEach((s, n) => {
+        s.hidden = n !== g
+      })
+      if (idxEl) idxEl.textContent = String(g + 1).padStart(2, '0')
+      if (capEl) capEl.textContent = slides[g].dataset.caption || ''
+    }
+    igRoot
+      .querySelector('[data-ig-prev]')
+      ?.addEventListener('click', () => {
+        g = (g - 1 + slides.length) % slides.length
+        renderIg()
+      })
+    igRoot
+      .querySelector('[data-ig-next]')
+      ?.addEventListener('click', () => {
+        g = (g + 1) % slides.length
+        renderIg()
+      })
+    renderIg()
+  } else {
+    // --- static status feed carousel (fallback) ---
+    let i = 0
+    const keyEl = document.querySelector('[data-feed-key]')
+    const valEl = document.querySelector('[data-feed-val]')
+    const idxEl = document.querySelector('[data-feed-idx]')
+    function renderFeed() {
+      keyEl.textContent = feeds[i].k
+      valEl.textContent = feeds[i].v
+      idxEl.textContent = String(i + 1).padStart(2, '0')
+    }
+    document
+      .querySelector('[data-feed="prev"]')
+      ?.addEventListener('click', () => {
+        i = (i - 1 + feeds.length) % feeds.length
+        renderFeed()
+      })
+    document
+      .querySelector('[data-feed="next"]')
+      ?.addEventListener('click', () => {
+        i = (i + 1) % feeds.length
+        renderFeed()
+      })
   }
-  document
-    .querySelector('[data-feed="prev"]')
-    ?.addEventListener('click', () => {
-      i = (i - 1 + feeds.length) % feeds.length
-      renderFeed()
-    })
-  document
-    .querySelector('[data-feed="next"]')
-    ?.addEventListener('click', () => {
-      i = (i + 1) % feeds.length
-      renderFeed()
-    })
 </script>

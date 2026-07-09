@@ -4,22 +4,24 @@
  * Retro "field-ops" theme tokens (exposed as Tailwind utilities)
  * ------------------------------------------------------------------ */
 @theme {
-  --color-bg: #1c1f1a;
-  --color-panel: #20241d;
-  --color-panel-alt: #1a1d18;
-  --color-card: #242920;
-  --color-card-alt: #2a2f24;
-  --color-line: #3a4033;
-  --color-accent: #ff6a00;
-  --color-accent-soft: #ffb266;
-  --color-active: #9ecb6a;
-  --color-ink: #eef0ea;
-  --color-body: #d9dcd2;
-  --color-muted: #b8bcae;
-  --color-faint: #7a8270;
+  /* Dark = Modern-Warfare loadout screen: near-black charcoal + acid green */
+  --color-bg: #0d0f0d;
+  --color-panel: #161a15;
+  --color-panel-alt: #101310;
+  --color-card: #1d211c;
+  --color-card-alt: #262b25;
+  --color-line: #373d36;
+  --color-accent: #b4ff29;
+  --color-accent-soft: #d8ff8f;
+  --color-active: #7ed957;
+  --color-ink: #f1f4ee;
+  --color-body: #c6ccc0;
+  --color-muted: #949a8e;
+  --color-faint: #6a7065;
 
   --font-display: 'Rajdhani', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-serif: 'IBM Plex Serif', ui-serif, Georgia, 'Times New Roman', serif;
 
   --breakpoint-*: initial;
   --breakpoint-sm: 40rem;
@@ -29,24 +31,25 @@
 }
 
 /* ------------------------------------------------------------------ *
- * Light "field-manual / kraft-paper" variant.
+ * Light "tactical" variant — cool light-gray panels, darkened lime accent
+ * for legibility, keeping the Modern-Warfare green identity.
  * Overrides the theme tokens when <html data-theme="light">.
  * Higher specificity than :root, so utilities update at runtime.
  * ------------------------------------------------------------------ */
 :root[data-theme='light'] {
-  --color-bg: #e8e3d4;
-  --color-panel: #ded8c5;
-  --color-panel-alt: #e3ddcb;
-  --color-card: #f1ecdf;
-  --color-card-alt: #e6e0cd;
-  --color-line: #b3aa8f;
-  --color-accent: #c8500c;
-  --color-accent-soft: #9a3d08;
-  --color-active: #4c7a1d;
-  --color-ink: #292e22;
-  --color-body: #3b4032;
-  --color-muted: #555a48;
-  --color-faint: #77745c;
+  --color-bg: #e9ebe3;
+  --color-panel: #dfe2d8;
+  --color-panel-alt: #e4e7dd;
+  --color-card: #f2f4ec;
+  --color-card-alt: #e3e6db;
+  --color-line: #bcc0b1;
+  --color-accent: #4c7d10;
+  --color-accent-soft: #385f0a;
+  --color-active: #4c7d10;
+  --color-ink: #181b14;
+  --color-body: #33372c;
+  --color-muted: #555a49;
+  --color-faint: #74796a;
 }
 
 /* ------------------------------------------------------------------ *
@@ -123,15 +126,153 @@
 }
 
 /* ------------------------------------------------------------------ *
+ * Tactical "deploy" motion — HUD reveal on scroll + card lock-on
+ * ------------------------------------------------------------------ */
+
+/* Entrance: only hide (and animate) when JS is on AND motion is allowed,
+ * so no-JS / reduced-motion users always see fully-rendered content. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-reveal] {
+    opacity: 0;
+    transform: translateY(14px);
+    will-change: opacity, transform;
+  }
+  html.js [data-reveal].is-visible {
+    animation: ops-deploy 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: var(--reveal-delay, 0ms);
+  }
+}
+
+@keyframes ops-deploy {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) skewX(-2.5deg);
+  }
+  35% {
+    opacity: 1;
+  }
+  48% {
+    opacity: 0.5;
+  } /* HUD flicker */
+  60% {
+    opacity: 1;
+    transform: translateY(0) skewX(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Interactive card / box: scanline sweep + border lock-on + lift + glow */
+.ops-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.ops-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 32%,
+    color-mix(in srgb, var(--color-accent) 15%, transparent) 50%,
+    transparent 68%
+  );
+  transform: translateX(-130%);
+  opacity: 0;
+  transition:
+    transform 0.6s ease,
+    opacity 0.2s ease;
+}
+.ops-card:hover::before,
+.ops-card:focus-within::before {
+  transform: translateX(130%);
+  opacity: 1;
+}
+.ops-card:hover,
+.ops-card:focus-within {
+  border-color: var(--color-accent);
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.35),
+    0 0 0 1px color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ops-card:hover,
+  .ops-card:focus-within {
+    transform: translateY(-3px);
+  }
+}
+
+/* Animated corner brackets that snap in on hover (tactical lock-on) */
+.ops-card .ops-corner {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  z-index: 3;
+  opacity: 0;
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+  pointer-events: none;
+}
+.ops-card .ops-corner-tl {
+  top: 6px;
+  left: 6px;
+  border-top: 2px solid var(--color-accent);
+  border-left: 2px solid var(--color-accent);
+  transform: translate(4px, 4px);
+}
+.ops-card .ops-corner-br {
+  bottom: 6px;
+  right: 6px;
+  border-bottom: 2px solid var(--color-accent);
+  border-right: 2px solid var(--color-accent);
+  transform: translate(-4px, -4px);
+}
+.ops-card:hover .ops-corner,
+.ops-card:focus-within .ops-corner {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+/* Blog/tag rows: subtle slide + accent tick on hover */
+.ops-row {
+  position: relative;
+  transition:
+    transform 0.16s ease,
+    color 0.16s ease;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ops-row:hover {
+    transform: translateX(4px);
+  }
+}
+
+/* ------------------------------------------------------------------ *
  * Article typography for rendered MDX (.post-body)
  * ------------------------------------------------------------------ */
 .post-body {
   color: var(--color-body);
-  font-size: 1.05rem;
-  line-height: 1.75;
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  line-height: 1.85;
+  letter-spacing: 0.003em;
 }
 .post-body > * + * {
-  margin-top: 1.15em;
+  margin-top: 1.4em;
+}
+@media (min-width: 48rem) {
+  .post-body {
+    font-size: 1.26rem;
+  }
 }
 .post-body h1,
 .post-body h2,

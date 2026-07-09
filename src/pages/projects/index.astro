@@ -27,10 +27,16 @@ function status(endDate?: Date) {
 
   <div class="grid gap-6 sm:grid-cols-2">
     {
-      projects.map((proj) => {
+      projects.map((proj, i) => {
         const s = status(proj.data.endDate)
         return (
-          <div class="relative flex flex-col border border-l-[3px] border-line border-l-accent bg-card px-6 py-6 transition-shadow hover:shadow-[0_4px_14px_rgba(0,0,0,0.35)]">
+          <div
+            data-reveal
+            style={`--reveal-delay:${i * 80}ms`}
+            class="ops-card relative flex flex-col border border-l-[3px] border-line border-l-accent bg-card px-6 py-6"
+          >
+            <span class="ops-corner ops-corner-tl" />
+            <span class="ops-corner ops-corner-br" />
             <div class="mb-2.5 flex items-center gap-2.5">
               <span class={`h-2 w-2 rounded-full bg-current shadow-[0_0_6px_currentColor] ${s.cls}`} />
               <span class={`font-mono text-[10px] tracking-[1.5px] ${s.cls}`}>
