@@ -115,6 +115,24 @@
   border-top: 2px solid var(--color-accent);
   border-left: 2px solid var(--color-accent);
 }
+@utility bracket-tr {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 14px;
+  height: 14px;
+  border-top: 2px solid var(--color-accent);
+  border-right: 2px solid var(--color-accent);
+}
+@utility bracket-bl {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  border-bottom: 2px solid var(--color-accent);
+  border-left: 2px solid var(--color-accent);
+}
 @utility bracket-br {
   position: absolute;
   bottom: 0;
