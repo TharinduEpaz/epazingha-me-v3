@@ -4,15 +4,15 @@ export const prerender = true;
 import Link from '@/components/Link.astro'
 import PageHead from '@/components/PageHead.astro'
 import BlogCard from '@/components/react/blog-card'
-import Skills from '@/components/react/skills'
 import { buttonVariants } from '@/components/ui/button'
 import Profile3D from '@/components/react/profile-3d'
 import Layout from '@/layouts/Layout.astro'
-import { getRecentPosts } from '@/lib/data-utils'
+import { getRecentPosts, getAllProjects } from '@/lib/data-utils'
 import { SITE } from '@/consts'
 import SriLankaSVG from '@/components/react/Srilanka'
 
 const blog = await getRecentPosts(3)
+const projects = await getAllProjects()
 const currentUrl = Astro.url;
 ---
 
@@ -55,21 +55,56 @@ const currentUrl = Astro.url;
       </div>
     </div>
 
-    <section class="relative" aria-labelledby="skills-title">
+    <section class="relative" aria-labelledby="hustles-title">
       <h2
-        id="skills-title"
+        id="hustles-title"
         class="font-custom text-foreground text-2xl font-bold"
-        title="skills"
-        aria-label="skills"
+        title="weekend hustles"
+        aria-label="weekend hustles"
         role="heading"
       >
-        Skills & Technologies
+        Weekend Hustles
       </h2>
-      <p class="text-muted-foreground text-sm" aria-label="skills description">
-        Here are some of the technologies I've been working with:
+      <p class="text-muted-foreground text-sm" aria-label="weekend hustles description">
+        Things I've built on my own time, outside the day job.
       </p>
-      <div>
-        <Skills client:load />
+      <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
+        {
+          projects.map((project) => (
+            <a
+              class="group flex h-full w-full flex-col overflow-hidden rounded-2xl border border-card-foreground/10 bg-card transition-all duration-300 hover:translate-y-[-4px] hover:shadow-lg"
+              href={`/projects/${project.id}`}
+              aria-label={project.data.name}
+            >
+              <div class="flex grow flex-col justify-between p-5">
+                <div>
+                  <h3 class="mb-2 text-lg font-medium text-foreground">{project.data.name}</h3>
+                  <p class="mb-4 line-clamp-2 text-sm text-muted-foreground">
+                    {project.data.description}
+                  </p>
+                </div>
+                <div class="flex flex-wrap gap-2 border-t border-border/40 pt-3">
+                  {project.data.tags?.slice(0, 3).map((tag) => (
+                    <span class="rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+      <div class="mt-6 flex justify-center">
+        <Link
+          href="/projects"
+          class={buttonVariants({ variant: 'ghost' }) + ' group'}
+        >
+          See all projects <span
+            class="ml-1.5 transition-transform group-hover:translate-x-1"
+            >&rarr;</span
+          >
+        </Link>
       </div>
     </section>
 

@@ -31,10 +31,10 @@
   --card-foreground: oklch(0.24 0 0);
   --popover: oklch(0.99 0 0);
   --popover-foreground: oklch(0.24 0 0);
-  --primary: oklch(0.43 0.04 42.00);
+  --primary: oklch(0.1706 0.1061 267.88);
   --primary-foreground: oklch(1.00 0 0);
-  --secondary: oklch(0.92 0.07 76.67);
-  --secondary-foreground: oklch(0.35 0.07 41.41);
+  --secondary: oklch(0.7202 0.1 211);
+  --secondary-foreground: oklch(0.1706 0.1061 267.88);
   --muted: oklch(0.95 0 0);
   --muted-foreground: oklch(0.50 0 0);
   --accent: oklch(0.93 0 0);
@@ -63,7 +63,13 @@
   --font-mono:
     Geist Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     'Liberation Mono', 'Courier New', monospace;
-  
+  --font-serif:
+    'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, Cambria,
+    ui-serif, 'Times New Roman', Times, serif;
+
+  --paper: oklch(0.97 0.014 85);
+  --paper-foreground: oklch(0.26 0.02 55);
+
   --shadow-2xs: 0 1px 3px 0px oklch(0.00 0 0 / 0.05);
   --shadow-xs: 0 1px 3px 0px oklch(0.00 0 0 / 0.05);
   --shadow-sm: 0 1px 3px 0px oklch(0.00 0 0 / 0.10), 0 1px 2px -1px oklch(0.00 0 0 / 0.10);
@@ -107,7 +113,10 @@
   --sidebar-accent-foreground: oklch(0.97 0 0);
   --sidebar-border: oklch(0.27 0.01 285.81);
   --sidebar-ring: oklch(0.87 0.01 286.27);
-  
+
+  --paper: oklch(0.23 0.014 70);
+  --paper-foreground: oklch(0.90 0.02 75);
+
   --shadow-2xs: 0 1px 3px 0px oklch(0.00 0 0 / 0.05);
   --shadow-xs: 0 1px 3px 0px oklch(0.00 0 0 / 0.05);
   --shadow-sm: 0 1px 3px 0px oklch(0.00 0 0 / 0.10), 0 1px 2px -1px oklch(0.00 0 0 / 0.10);
@@ -150,6 +159,8 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-paper: var(--paper);
+  --color-paper-foreground: var(--paper-foreground);
 
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
@@ -236,5 +247,120 @@
 
   ::backdrop {
     @apply bg-background/50;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Book-styled blog article: serif type on a warm paper background
+ * ------------------------------------------------------------------ */
+.book-content {
+  font-family: var(--font-serif);
+  font-size: 1.1875rem;
+  line-height: 1.85;
+  color: var(--paper-foreground);
+
+  & > * + * {
+    margin-top: 1.4em;
+  }
+
+  & h1,
+  & h2,
+  & h3,
+  & h4 {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    color: var(--paper-foreground);
+    line-height: 1.2;
+  }
+
+  & h1 {
+    font-size: 2.4em;
+    margin-top: 2.6em;
+  }
+  & h2 {
+    font-size: 1.9em;
+    margin-top: 2.6em;
+  }
+  & h3 {
+    font-size: 1.5em;
+    margin-top: 1.6em;
+  }
+  & h4 {
+    font-size: 1.25em;
+    margin-top: 1.2em;
+  }
+
+  & h2 + *,
+  & h3 + *,
+  & h4 + * {
+    margin-top: 0.7em;
+  }
+
+  & > h1:first-child,
+  & > h2:first-child,
+  & > h3:first-child,
+  & > h4:first-child {
+    margin-top: 0;
+  }
+
+  & p {
+    text-wrap: pretty;
+  }
+
+  & a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  & strong {
+    font-weight: 700;
+  }
+
+  & em {
+    font-style: italic;
+  }
+
+  & blockquote {
+    font-style: italic;
+    border-left: 2px solid var(--border);
+    padding-left: 1.2em;
+    opacity: 0.85;
+  }
+
+  & ul,
+  & ol {
+    padding-left: 1.4em;
+  }
+  & ul {
+    list-style: disc;
+  }
+  & ol {
+    list-style: decimal;
+  }
+  & li + li {
+    margin-top: 0.5em;
+  }
+
+  & hr {
+    border-color: var(--border);
+    opacity: 0.6;
+  }
+
+  & code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: color-mix(in oklch, var(--paper-foreground) 8%, transparent);
+    padding: 0.15em 0.4em;
+    border-radius: 0.3em;
+  }
+
+  & pre code {
+    background: none;
+    padding: 0;
+  }
+
+  & img {
+    border-radius: var(--radius-md);
   }
 }
